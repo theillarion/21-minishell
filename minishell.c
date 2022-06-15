@@ -1,5 +1,6 @@
 #include "minishell.h"
 
+
 //static void	int_handler(int status)
 //{
 //	printf("\n"); // Move to a new line
