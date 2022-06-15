@@ -6,6 +6,6 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
-# include "libft/libft.h"
+# include "../lib/libft/libft.h"
 
 #endif
