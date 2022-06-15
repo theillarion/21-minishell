@@ -2,7 +2,7 @@ NAME		=	minishell
 NAME_D		=	${NAME}_debug
 
 CC			=	cc
-FLAGS		=	-Wall -Werror -Wextra
+FLAGS		=	
 FLAGS_D		=	-g
 
 LIB_NAME_S		=	ft
@@ -19,7 +19,7 @@ LINK_LIB	=	-l$(LIB_NAME_S) -L$(LIB_PATH)
 LINK_LIB_D	=	-l$(LIB_NAME_S_D) -L$(LIB_PATH)
 
 SRCS		=	$(addprefix srcs/,\
-				minishell.c)
+				signal.c minishell.c)
 HEADERS		=	includes/minishell.h
 
 OBJS		=	${SRCS:%.c=%.o}
