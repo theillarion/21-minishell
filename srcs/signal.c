@@ -1,20 +1,17 @@
 #include "minishell.h"
 
-
 void    ft_handler(int sig, siginfo_t	*info, void	*ucontext)
 {
     (void)info;
     (void)ucontext;
-    rl_replace_line("", 0);
+
+	if (sig != SIGINT && sig != SIGQUIT)
+		return;
+	rl_on_new_line();
+	ft_readline_insert("  ");
     if (sig == SIGINT)
     {
-        printf("\n");
-        rl_on_new_line();
-        rl_replace_line("", 0);
-        rl_redisplay();
-    }
-    else if (sig == SIGQUIT)
-    {
+		write(STDOUT_FILENO, "\n", 1);
         rl_on_new_line();
         rl_replace_line("", 0);
         rl_redisplay();
