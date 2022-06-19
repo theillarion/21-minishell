@@ -17,7 +17,7 @@ LINK_LIB	=	-lreadline -l$(LIB_NAME_S) -L$(LIB_PATH)
 LINK_LIB_D	=	-lreadline -l$(LIB_NAME_S_D) -L$(LIB_PATH)
 
 SRCS		=	$(addprefix srcs/,\
-				signal.c minishell.c)
+				signal.c utilities.c utilities_readline.c minishell.c)
 HEADERS		=	includes/minishell.h
 
 OBJS		=	${SRCS:%.c=%.o}
