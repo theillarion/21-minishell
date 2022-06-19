@@ -2,7 +2,7 @@ NAME		=	minishell
 NAME_D		=	${NAME}_debug
 
 CC			=	cc
-FLAGS		=	
+FLAGS		=	-Wall -Werror -Wextra
 FLAGS_D		=	-g
 
 LIB_NAME_S		=	ft
@@ -13,10 +13,8 @@ LIB_PATH		=	lib/libft/
 LIB				=	$(LIB_PATH)$(LIB_NAME)
 LIB_D			=	$(LIB_PATH)$(LIB_NAME_D)
 
-LINK		=	-lreadline
-LINK_D		=	-lreadline
-LINK_LIB	=	-l$(LIB_NAME_S) -L$(LIB_PATH)
-LINK_LIB_D	=	-l$(LIB_NAME_S_D) -L$(LIB_PATH)
+LINK_LIB	=	-lreadline -l$(LIB_NAME_S) -L$(LIB_PATH)
+LINK_LIB_D	=	-lreadline -l$(LIB_NAME_S_D) -L$(LIB_PATH)
 
 SRCS		=	$(addprefix srcs/,\
 				signal.c minishell.c)
@@ -53,12 +51,12 @@ all			:	$(NAME)
 debug		:	${NAME_D}
 
 $(NAME)		:	$(LIB) $(OBJS)
-				@$(CC) $(LINK) $(OBJS) $(LINK_LIB) -o $(NAME)
+				@$(CC) $(OBJS) $(LINK_LIB) -o $(NAME)
 				@printf "$(COLOR_LCYAN)link$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready $(COLOR_LYELLOW)$(NAME)$(NOCOLOR) for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
 $(NAME_D)	:	$(LIB_D) $(OBJS_D)
-				@$(CC) $(LINK_D) $(OBJS_D) $(LINK_LIB_D) -o $(NAME_D)
+				@$(CC) $(OBJS_D) $(LINK_LIB_D) -o $(NAME_D)
 				@printf "$(COLOR_LCYAN)link debug$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready $(COLOR_LYELLOW)$(NAME_D)$(NOCOLOR) for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
