@@ -33,6 +33,8 @@ typedef	struct s_environment
 {
 	t_prompt	prompt;
 	t_info		info;
+	t_sigaction	action;
+	char		*input_line;
 }		t_environment;
 
 //		prompt.c
@@ -45,9 +47,9 @@ void	ft_init(t_environment	*env, const char	*name_shell);
 void	ft_error(const char	*name_shell, const char	*err_msg);
 
 //		commands.c
-void	ft_command_cd(t_environment 	*env, const char	*arg);
 char	*ft_get_pwd(void);
-void	ft_commands_pwd(t_environment	*env);
+void	ft_command_cd(t_environment 	*env, const char	*arg);
+void	ft_command_pwd(t_environment	*env);
 
 //		utilities_readline.c
 void	ft_readline_insert(const char	*str);
