@@ -26,7 +26,7 @@ char	*ft_get_pwd()
 	return (path);
 }
 
-void	ft_commands_pwd(t_environment	*env)
+void	ft_command_pwd(t_environment	*env)
 {
 	if (env->info.pwd == NULL)
 		ft_error(env->info.name_shell, "pwd");
