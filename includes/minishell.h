@@ -72,6 +72,7 @@ int		ft_command_unset(t_environment	*env, const char	*arg);
 
 //		commands_2.c
 int		ft_command_exit(t_environment 	*env, const char	*arg);
+int		ft_command_export(t_environment	*env, const char	*arg);
 
 //		utilities_readline.c
 void	ft_readline_insert(const char	*str);
@@ -88,6 +89,9 @@ void	ft_deinit(t_environment	*env);
 
 //		exit.c
 int		ft_exit(t_environment	*env, int status, bool is_clean);
+
+//		variable_env.c
+bool	ft_convert_to_struct(t_variable_env	*dst, const char	*src);
 
 //		main.c
 int		main(int argc, char **argv, char    **envp);
