@@ -15,17 +15,17 @@ int	ft_smart_atoi(const char	*src, bool	*is_error)
 
 	number = 0;
 	sign = 1;
-	while (*src == 32 || (*src > 8 && *src < 14))
+	while (src != NULL && (*src == 32 || (*src > 8 && *src < 14)))
 		++src;
-	if (*src == '-' || *src == '+')
+	if (src != NULL && (*src == '-' || *src == '+'))
 	{
 		if (*src == '-')
 			sign = -1;
 		++src;
 	}
-	while (ft_isdigit(*src))
+	while (src != NULL && ft_isdigit(*src))
 		number = (number * 10) + (*(src++) - '0');
-	if (*src != '\0')
+	if (src == NULL || *src != '\0')
 		*is_error = true;
 	return (number * sign);
 }
