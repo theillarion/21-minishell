@@ -35,6 +35,12 @@ typedef struct s_variable_env
 	char	*value;
 }			t_variable_env;
 
+enum e_status
+{
+	SUCCESS = 0,
+	COMMON_ERROR
+};
+
 typedef	struct s_environment
 {
 	t_prompt	prompt;
@@ -42,6 +48,7 @@ typedef	struct s_environment
 	t_sigaction	action;
 	t_vector	variables_env;
 	char		*input_line;
+	int			last_code;
 }				t_environment;
 
 void	ft_push(t_vector	*vector, const char	*string_var);
@@ -58,10 +65,10 @@ void	ft_error(const char	*name_shell, const char	*err_msg);
 
 //		commands.c
 char	*ft_get_pwd(void);
-void	ft_command_cd(t_environment 	*env, const char	*arg);
-void	ft_command_pwd(t_environment	*env);
-void	ft_command_env(const t_environment	*env);
-void	ft_command_unset(t_environment	*env, const char	*arg);
+int		ft_command_cd(t_environment 	*env, const char	*arg);
+int		ft_command_pwd(t_environment	*env);
+int		ft_command_env(const t_environment	*env);
+int		ft_command_unset(t_environment	*env, const char	*arg);
 
 //		utilities_readline.c
 void	ft_readline_insert(const char	*str);
