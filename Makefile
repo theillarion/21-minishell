@@ -25,7 +25,8 @@ LINK_LIB	=	-lreadline -l$(LIB_NAME_S) -L$(LIB_PATH) -l$(LIB_V_NAME_S) -L$(LIB_V_
 LINK_LIB_D	=	-lreadline -l$(LIB_NAME_S_D) -L$(LIB_PATH) -l$(LIB_V_NAME_S_D) -L$(LIB_V_PATH)
 
 SRCS		=	$(addprefix srcs/,\
-				signal.c prompt.c utilities.c utilities_vector.c utilities_readline.c commands.c init.c error.c minishell.c)
+				signal.c prompt.c utilities.c utilities_vector.c utilities_readline.c commands.c commands_2.c\
+				exit.c deinit.c variable.c init.c error.c minishell.c)
 HEADERS		=	includes/minishell.h
 
 OBJS		=	${SRCS:%.c=%.o}
