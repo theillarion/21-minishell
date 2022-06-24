@@ -70,6 +70,9 @@ int		ft_command_pwd(t_environment	*env);
 int		ft_command_env(const t_environment	*env);
 int		ft_command_unset(t_environment	*env, const char	*arg);
 
+//		commands_2.c
+int		ft_command_exit(t_environment 	*env, const char	*arg);
+
 //		utilities_readline.c
 void	ft_readline_insert(const char	*str);
 
@@ -79,6 +82,12 @@ int		ft_smart_atoi(const char	*src, bool	*is_error);
 
 //		signal.c
 void	ft_initial_action(t_sigaction *action);
+
+//		deinit.c
+void	ft_deinit(t_environment	*env);
+
+//		exit.c
+int		ft_exit(t_environment	*env, int status, bool is_clean);
 
 //		main.c
 int		main(int argc, char **argv, char    **envp);
