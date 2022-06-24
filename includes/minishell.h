@@ -9,13 +9,13 @@
 # include <errno.h>
 # include <sys/types.h>
 # include <fcntl.h>
+# include <sys/wait.h>
 
 # include <readline/readline.h>
 # include <readline/history.h>
 
 # include "../lib/libft/libft.h"
 # include "../lib/libvector/includes/vector.h"
-# include "ft_token.h"
 # include "get_next_line.h"
 
 typedef struct sigaction	t_sigaction;
@@ -52,7 +52,8 @@ enum e_Token
 	t_r_out,
 	t_r_in,
 	t_hd,
-	t_r_outa
+	t_r_outa,
+	t_sep
 };
 
 typedef struct s_token
@@ -127,7 +128,9 @@ void	ft_deinit(t_environment	*env);
 int		ft_exit(t_environment	*env, int status, bool is_clean);
 
 //		variable_env.c
-bool	ft_convert_to_struct(t_variable_env	*dst, const char	*src);
+bool	ft_convert_str_to_struct(t_variable_env	*dst, const char	*src);
+bool	ft_convert_vector_to_array(char	***dst,	const t_vector	*src);
+bool	ft_convert_token_vector_to_str_array(char	***dst,	const t_vector	*src);
 
 //		in_out_files.c
 void	input_file_fd(t_redir *token);
@@ -146,14 +149,17 @@ void	exit_find_failure(char **in_argv, char *access_denied_path);
 char	*get_next_line(int fd);
 
 //		here_doc.c
-void	here_doc(t_redir *token, int pipe_fd[2])
+void	here_doc(t_redir *token, int pipe_fd[2]);
 
 //		lexer.c
 int preparse(t_environment *env);
 void lexer(t_environment *env);
 void parser(t_environment *env);
+int executor(t_environment *env);
 
 //		main.c
 int		main(int argc, char **argv, char    **envp);
+
+void rl_replace_line (const char *, int);
 
 #endif

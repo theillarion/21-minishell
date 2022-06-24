@@ -1,10 +1,10 @@
-#include "minishell.h"
+#include "../includes/minishell.h"
 
 void	ft_push(t_vector	*vector, const char	*string_var)
 {
 	t_variable_env	var;
 
-	if (ft_convert_to_struct(&var, string_var) == false)
+	if (ft_convert_str_to_struct(&var, string_var) == false)
 	{
 		// error
 		return;

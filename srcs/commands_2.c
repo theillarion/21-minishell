@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../includes/minishell.h"
 
 int	ft_command_exit(t_environment 	*env, const char	*arg)
 {
@@ -29,7 +29,7 @@ int ft_command_export(t_environment	*env, const char	*arg)
 	t_variable_env	var_env;
 	size_t			index;
 
-	if (env != NULL && ft_convert_to_struct(&var_env, arg) == true)
+	if (env != NULL && ft_convert_str_to_struct(&var_env, arg) == true)
 	{
 		index = ft_find_by_name(&env->variables_env, var_env.name);
 		if (index < ft_size(&env->variables_env))

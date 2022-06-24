@@ -1,7 +1,7 @@
 NAME		=	minishell
 NAME_D		=	$(NAME)_debug
 
-CC			=	cc
+CC			=	clang
 FLAGS		=	-Wall -Werror -Wextra
 FLAGS_D		=	-g
 
@@ -22,14 +22,16 @@ LIB_V			=	$(LIB_V_PATH)/$(LIB_V_NAME)
 LIB_V_D			=	$(LIB_V_PATH)/$(LIB_V_NAME_D)
 
 LINK_LIB	=	-lreadline -l$(LIB_NAME_S) -L$(LIB_PATH) -l$(LIB_V_NAME_S) -L$(LIB_V_PATH)
+#LINK_LIB	=	-lreadline -L Users/tim/.brew/opt/readline/lib -I /Users/tim/.brew/opt/readline/include -l$(LIB_NAME_S) -L$(LIB_PATH) -l$(LIB_V_NAME_S) -L$(LIB_V_PATH)
 LINK_LIB_D	=	-lreadline -l$(LIB_NAME_S_D) -L$(LIB_PATH) -l$(LIB_V_NAME_S_D) -L$(LIB_V_PATH)
+#LINK_LIB_D	=	-lreadline -L /Users/tim/.brew/opt/readline/lib -I /Users/tim/.brew/opt/readline/include -l$(LIB_NAME_S_D) -L$(LIB_PATH) -l$(LIB_V_NAME_S_D) -L$(LIB_V_PATH)
 
 SRCS		=	$(addprefix srcs/,\
-				signal.c prompt.c utilities.c utilities_vector.c utilities_readline.c commands.c commands_2.c\
-				exit.c deinit.c variable.c init.c error.c minishell.c \
-				lexer.c ft_isspace.c in_out_files.c ft_errors_managment.c here_doc.c)
+				signal.c prompt.c utilities.c utilities_vector.c utilities_readline.c commands.c commands_2.c \
+				exit.c deinit.c utilities_variable_env.c  init.c error.c minishell.c \
+				lexer.c ft_isspace.c in_out_files.c ft_errors_managment.c here_doc.c get_next_line.c )
 
-HEADERS		=	includes/minishell.h includes/ft_token.h
+HEADERS		=	includes/minishell.h
 
 OBJS		=	${SRCS:%.c=%.o}
 OBJS_D		=	${SRCS:%.c=%_debug.o}

@@ -23,7 +23,7 @@ void	here_doc(t_redir *token, int pipe_fd[2])
 	str = get_next_line(0);
 	while (str)
 	{
-		if (!strncmp(delimit, str, ft_strlen(str)))
+		if (!ft_strncmp(delimit, str, ft_strlen(str)))
 			finalize_heredoc(pipe_fd, str, delimit, EXIT_SUCCESS);
 		ft_putstr_fd(str, pipe_fd[1]);
 		free(str);

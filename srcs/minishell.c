@@ -35,6 +35,17 @@ int main(int argc, char **argv, char    **envp)
 			ft_init_vector(&env.tokens, sizeof(t_token));
 			lexer(&env);
 			parser(&env);
+
+			int			status;
+			pid_t		pid;
+			pid = executor(&env);
+			if (pid)
+			{
+				if (waitpid(pid, &status, 0) == -1)
+					ft_raise_error("waitpid error\n");
+//				if (WIFEXITED(status))
+//					exit(WEXITSTATUS(status));
+			}
 		}
 		ft_get_line(&env);
 		//ft_command_unset(&env, env.input_line);
