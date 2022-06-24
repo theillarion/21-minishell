@@ -1,5 +1,5 @@
 NAME		=	minishell
-NAME_D		=	${NAME}_debug
+NAME_D		=	$(NAME)_debug
 
 CC			=	cc
 FLAGS		=	-Wall -Werror -Wextra
@@ -9,15 +9,23 @@ LIB_NAME_S		=	ft
 LIB_NAME_S_D	=	ft_debug
 LIB_NAME		=	lib$(LIB_NAME_S).a
 LIB_NAME_D		=	lib$(LIB_NAME_S_D).a
-LIB_PATH		=	lib/libft/
-LIB				=	$(LIB_PATH)$(LIB_NAME)
-LIB_D			=	$(LIB_PATH)$(LIB_NAME_D)
+LIB_PATH		=	lib/libft
+LIB				=	$(LIB_PATH)/$(LIB_NAME)
+LIB_D			=	$(LIB_PATH)/$(LIB_NAME_D)
 
-LINK_LIB	=	-lreadline -l$(LIB_NAME_S) -L$(LIB_PATH)
-LINK_LIB_D	=	-lreadline -l$(LIB_NAME_S_D) -L$(LIB_PATH)
+LIB_V_NAME_S	=	vector
+LIB_V_NAME_S_D	=	vector_debug
+LIB_V_NAME		=	lib$(LIB_V_NAME_S).a
+LIB_V_NAME_D	=	lib$(LIB_V_NAME_S_D).a
+LIB_V_PATH		=	lib/libvector
+LIB_V			=	$(LIB_V_PATH)/$(LIB_V_NAME)
+LIB_V_D			=	$(LIB_V_PATH)/$(LIB_V_NAME_D)
+
+LINK_LIB	=	-lreadline -l$(LIB_NAME_S) -L$(LIB_PATH) -l$(LIB_V_NAME_S) -L$(LIB_V_PATH)
+LINK_LIB_D	=	-lreadline -l$(LIB_NAME_S_D) -L$(LIB_PATH) -l$(LIB_V_NAME_S_D) -L$(LIB_V_PATH)
 
 SRCS		=	$(addprefix srcs/,\
-				signal.c prompt.c utilities.c utilities_readline.c commands.c init.c error.c minishell.c)
+				signal.c prompt.c utilities.c utilities_vector.c utilities_readline.c commands.c init.c error.c minishell.c)
 HEADERS		=	includes/minishell.h
 
 OBJS		=	${SRCS:%.c=%.o}
@@ -50,12 +58,12 @@ all			:	$(NAME)
 
 debug		:	${NAME_D}
 
-$(NAME)		:	$(LIB) $(OBJS)
+$(NAME)		:	$(LIB) $(LIB_V) $(OBJS)
 				@$(CC) $(OBJS) $(LINK_LIB) -o $(NAME)
 				@printf "$(COLOR_LCYAN)link$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready $(COLOR_LYELLOW)$(NAME)$(NOCOLOR) for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
-$(NAME_D)	:	$(LIB_D) $(OBJS_D)
+$(NAME_D)	:	$(LIB_D) $(LIB_V_D) $(OBJS_D)
 				@$(CC) $(OBJS_D) $(LINK_LIB_D) -o $(NAME_D)
 				@printf "$(COLOR_LCYAN)link debug$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready $(COLOR_LYELLOW)$(NAME_D)$(NOCOLOR) for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
@@ -66,15 +74,23 @@ $(LIB)		:
 $(LIB_D)		:	
 				@$(MAKE) debug -s -C $(LIB_PATH) 
 
+$(LIB_V)		:
+				@$(MAKE) -s -C $(LIB_V_PATH)
+
+$(LIB_V_D)		:
+				@$(MAKE) debug -s -C $(LIB_V_PATH)
+
 clean		:	
 				@$(RM) $(OBJS) $(OBJS_D)
 				@$(MAKE) clean -s -C $(LIB_PATH)
+				@$(MAKE) clean -s -C $(LIB_V_PATH)
 				@printf "$(COLOR_LCYAN)$@$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready $(COLOR_LYELLOW)$(NAME)$(NOCOLOR) for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
 fclean		:	clean
 				@$(RM) $(NAME) $(NAME_D)
 				@$(MAKE) fclean -s -C $(LIB_PATH)
+				@$(MAKE) fclean -s -C $(LIB_V_PATH)
 				@printf "$(COLOR_LCYAN)$@$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready $(COLOR_LYELLOW)$(NAME)$(NOCOLOR) for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
