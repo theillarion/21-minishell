@@ -7,6 +7,7 @@
 # include <readline/history.h>
 
 # include "../lib/libft/libft.h"
+# include "../lib/libvector/includes/vector.h"
 
 # include <unistd.h>
 # include <stdlib.h>
@@ -28,21 +29,30 @@ typedef struct s_info
 	char	*pwd;
 }	t_info;
 
+typedef struct s_variable_env
+{
+	char	*name;
+	char	*value;
+}			t_variable_env;
 
 typedef	struct s_environment
 {
 	t_prompt	prompt;
 	t_info		info;
 	t_sigaction	action;
+	t_vector	variables_env;
 	char		*input_line;
-}		t_environment;
+}				t_environment;
+
+void	ft_push(t_vector	*vector, const char	*string_var);
+size_t	ft_find_by_name(const t_vector	*vector, const char	*name);
 
 //		prompt.c
 void	ft_set_new_prompt(t_prompt	*prompt, t_info	info);
 
 //		init.c
-void	ft_init(t_environment	*env, const char	*name_shell);
-
+void	ft_init(t_environment	*env, const char	**envp,
+				const char	*name_shell);
 //		error.c
 void	ft_error(const char	*name_shell, const char	*err_msg);
 
@@ -50,6 +60,8 @@ void	ft_error(const char	*name_shell, const char	*err_msg);
 char	*ft_get_pwd(void);
 void	ft_command_cd(t_environment 	*env, const char	*arg);
 void	ft_command_pwd(t_environment	*env);
+void	ft_command_env(const t_environment	*env);
+void	ft_command_unset(t_environment	*env, const char	*arg);
 
 //		utilities_readline.c
 void	ft_readline_insert(const char	*str);
