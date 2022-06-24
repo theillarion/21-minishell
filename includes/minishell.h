@@ -75,6 +75,7 @@ void	ft_readline_insert(const char	*str);
 
 //		utilities.c
 void	ft_smart_free(void	**address);
+int		ft_smart_atoi(const char	*src, bool	*is_error);
 
 //		signal.c
 void	ft_initial_action(t_sigaction *action);
