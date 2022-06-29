@@ -1,0 +1,8 @@
+[submodule "lib/libft"]
+	path = lib/libft
+	url = https://github.com/theillarion/21-libft.git
+	brahch = main
+[submodule "lib/libvector"]
+	path = lib/libvector
+	url = https://github.com/theillarion/vector-c.git
+	branch = main
