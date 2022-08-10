@@ -26,8 +26,7 @@ LINK_LIB_D	=	-lreadline -l$(LIB_NAME_S_D) -L$(LIB_PATH) -l$(LIB_V_NAME_S_D) -L$(
 
 SRCS		=	$(addprefix srcs/,\
 				signal.c prompt.c utilities.c utilities_vector.c utilities_readline.c commands.c commands_2.c\
-				exit.c deinit.c variable.c init.c error.c minishell.c  \
-				lexer.c ft_token.c ft_token_utils.c	ft_isspace.c)
+				exit.c deinit.c variable.c init.c error.c minishell.c)
 
 HEADERS		=	includes/minishell.h includes/ft_token.h
 
@@ -107,9 +106,9 @@ norm		:
 				@printf "$(COLOR_LCYAN)norminette$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
-pd:			: $(LIB) $(LIB_V) $(OBJS)
-			@$(CC) $(OBJS) $(LINK_LIB) -o $(NAME)
-			@printf "$(COLOR_LCYAN)link$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
-			@printf "ready $(COLOR_LYELLOW)$(NAME)$(NOCOLOR) for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
+pd			:
+				@$(MAKE) debug -s -C $(LIB_PATH)
+				@$(MAKE) debug -s -C $(LIB_V_PATH)
+				clang -Wall -Wextra -Werror srcs/lexer.c srcs/ft_token.c srcs/ft_token_utils.c srcs/ft_isspace.c -L./lib/libft -lft -L./lib/libvector -lvector -lreadline -g -Iincludes
 
 print-%  	: ; @echo $* = $($*)

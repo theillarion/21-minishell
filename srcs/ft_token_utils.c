@@ -49,7 +49,7 @@ int	inword_handler(t_vector **argv, char *p, char *st_of_w)
 	if (ft_isspace(c))
 	{
 		*p = 0;
-		ft_push_back(*argv, st_of_w);
+		ft_push_back(*argv, &st_of_w);
 		state = 0;
 	}
 	return (state);
@@ -65,7 +65,7 @@ int	instring_dq_handler(t_vector **argv, char *p, char *st_of_w)
 	if (c == '"')
 	{
 		*p = 0;
-		ft_push_back(*argv, st_of_w);
+		ft_push_back(*argv, &st_of_w);
 		state = 0;
 	}
 	return (state);
@@ -75,14 +75,13 @@ int	instring_q_handler(t_vector **argv, char *p, char *st_of_w)
 {
 	int		c;
 	int		state;
-	t_vector	*new;
 
 	state = 3;
 	c = (unsigned char)*p;
 	if (c == '\'')
 	{
 		*p = 0;
-		ft_push_back(*argv, st_of_w);
+		ft_push_back(*argv, &st_of_w);
 		state = 0;
 	}
 	return (state);

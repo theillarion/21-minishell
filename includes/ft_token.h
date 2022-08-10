@@ -30,6 +30,6 @@ int		inword_handler(t_vector **argv, char *p, char *st_of_w);
 int		instring_dq_handler(t_vector **argv, char *p, char *st_of_w);
 int		instring_q_handler(t_vector **argv, char *p, char *st_of_w);
 
-char	**ft_split_with_tokens(const char *s);
+void	ft_split_with_tokens(const char *s, t_vector	*v_argv);
 
 #endif

@@ -38,7 +38,7 @@ void	st_handlers(t_vector **argv, char *p, char **st_of_w,
 	}
 }
 
-size_t	ft_split_token(char *buffer, t_vector **argv)
+size_t	ft_split_token(char *buffer, t_vector *argv)
 {
 	char	*p;
 	char	*st_of_w;
@@ -48,31 +48,37 @@ size_t	ft_split_token(char *buffer, t_vector **argv)
 	p = buffer;
 	while (*p != '\0')
 	{
-		st_handlers(argv, p, &st_of_w, &state);
+		st_handlers(&argv, p, &st_of_w, &state);
 		p++;
 	}
 	if (state != 0)
-		ft_push_back(*argv, st_of_w);
+	{
+		ft_push_back(argv, &st_of_w);
+	}
 	return (0);
 }
 
-char	**ft_split_with_tokens(const char *s)
+void	ft_split_with_tokens(const char *s, t_vector *v_argv)
 {
-	size_t	v_size;
-	t_vector	*v_argv;
-	char	**argv;
-	int		i;
+//	size_t	v_size;
+//	t_vector	v_argv;
+//	char	**argv;
+//	int		i;
+//	char **current_string;
 
 	ft_init_vector(v_argv, sizeof(char *));
-	ft_split_token((char *)s, &v_argv);
-	v_size = ft_size(v_argv);
-	argv = ft_calloc((v_size + 1), sizeof(char *));
-	if (!argv)
-		exit(EXIT_FAILURE);
-	i = -1;
-	while (++i < ft_size((const t_vector *)v_argv))
-		argv[i] = ft_strdup(ft_get_element(v_argv,  i));
-	argv[v_size] = NULL;
-	ft_erase_all(v_argv);
-	return (argv);
+	ft_split_token((char *)s, v_argv);
+//	v_size = ft_size(v_argv);
+//	argv = ft_calloc((v_size + 1), sizeof(char *));
+//	if (!argv)
+//		exit(EXIT_FAILURE);
+//	i = -1;
+//	while ((size_t)++i < ft_size(&v_argv))
+//	{
+//		current_string = ft_get_element(&v_argv,  i);
+//		argv[i] = ft_strdup(*current_string);
+//	}
+//	argv[v_size] = NULL;
+//	ft_erase_all(&v_argv);
+//	return (&v_argv);
 }
