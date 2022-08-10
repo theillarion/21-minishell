@@ -7,7 +7,9 @@ void	ft_get_line(t_environment	*env)
 	ft_smart_free((void **)&env->input_line);
 	env->input_line = readline(env->prompt.current_prompt);
 	if (env->input_line != NULL && ft_strlen(env->input_line) > 0)
+	{
 		add_history(env->input_line);
+	}
 }
 
 int main(int argc, char **argv, char    **envp)
