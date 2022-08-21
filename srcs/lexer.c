@@ -245,6 +245,11 @@ void parser(t_vector *tokens)
 	}
 	printf("\n");
 	// debug end
+	i = -1;
+	while (++i < ft_size(&groups))
+	{
+		cur_cmd = (t_command *) ft_get_element(&groups, i);
+	}
 }
 
 int	main(int argc, char **argv, char **envp)
