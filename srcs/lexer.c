@@ -30,13 +30,13 @@ typedef struct s_token
 typedef struct s_redir
 {
 	int r_type;
-	char *arg;
+	t_token *arg;
 }	t_redir;
 
 typedef struct s_command
 {
-	char *command;
-	char *args;
+	t_token *command;
+	t_vector args;
 	t_vector redirs;
 }	t_command;
 
@@ -164,15 +164,8 @@ int add_redirect(t_vector *redirs, t_token *token, t_vector *tokens, size_t *i)
 	next_token = (t_token *)ft_get_element(tokens, *i);
 	if (!next_token)
 		return (0);
-	redir.arg = ft_substr(next_token->start, 0, next_token->size);
-	if (token->type == t_hd)
-		redir.r_type = r_here_doc;
-	if (token->type == t_r_in)
-		redir.r_type = r_in;
-	if (token->type == t_r_out)
-		redir.r_type = r_out;
-	if (token->type == t_r_outa)
-		redir.r_type = r_out_append;
+	redir.arg = next_token;
+	redir.r_type = token->type;
 	ft_push_back(redirs, (void *)&redir);
 	return (1);
 }
@@ -184,6 +177,7 @@ void get_command(t_vector *groups, t_vector *tokens, size_t *i)
 	int com_added;
 
 	ft_init_vector(&cmd.redirs, sizeof(t_redir));
+	ft_init_vector(&cmd.args, sizeof(t_vector));
 	com_added = 0;
 	while (*i < ft_size(tokens))
 	{
@@ -196,14 +190,9 @@ void get_command(t_vector *groups, t_vector *tokens, size_t *i)
 			if (!com_added)
 			{
 				com_added = 1;
-				cmd.command = ft_substr(cur_token->start, 0, cur_token->size);
-				cmd.args = ft_substr(cur_token->start, 0, cur_token->size);
+				cmd.command = cur_token;
 			}
-			else
-			{
-				cmd.args = ft_strjoin(cmd.args, " ");
-				cmd.args = ft_strjoin(cmd.args, ft_substr(cur_token->start, 0, cur_token->size));
-			}
+			ft_push_back(&cmd.args, (void *)cur_token);
 		}
 		(*i)++;
 	}
@@ -226,22 +215,43 @@ void parser(t_vector *tokens)
 	while (++i < ft_size(&groups))
 	{
 		cur_cmd = (t_command *)ft_get_element(&groups, i);
-		printf("┌команда───%s\n", cur_cmd->command);
+		printf("┌команда───%s\n", ft_substr(cur_cmd->command->start, 0, cur_cmd->command->size));
+
+
 		if (ft_size(&cur_cmd->redirs))
 		{
-			printf("├аргументы──%s\n", cur_cmd->args);
-			printf("└редиректы");
+			printf("├аргументы──");
+			size_t j = -1;
+			t_token *cur_arg;
+			while (++j < ft_size(&cur_cmd->args))
+			{
+				cur_arg = (t_token *)ft_get_element(&cur_cmd->args, j);
+				printf("%d─%s──", cur_arg->type, ft_substr(cur_arg->start, 0, cur_arg->size));
+			}
+			printf("\n");
+
+			printf("└редиректы──");
 			size_t r=-1;
 			t_redir *cur_redir;
 			while (++r < ft_size(&cur_cmd->redirs))
 			{
 				cur_redir = (t_redir *)ft_get_element(&cur_cmd->redirs, r);
-				printf("─%d─%s──", cur_redir->r_type, cur_redir->arg);
+				printf("%d─%s──", cur_redir->r_type, ft_substr(cur_redir->arg->start, 0, cur_redir->arg->size));
 			}
 			printf("\n");
 		}
 		else
-			printf("└аргументы──%s\n", cur_cmd->args);
+		{
+			printf("└аргументы──");
+			size_t j = -1;
+			t_token *cur_arg;
+			while (++j < ft_size(&cur_cmd->args))
+			{
+				cur_arg = (t_token *)ft_get_element(&cur_cmd->args, j);
+				printf("%d─%s──", cur_arg->type, ft_substr(cur_arg->start, 0, cur_arg->size));
+			}
+			printf("\n");
+		}
 	}
 	printf("\n");
 	// debug end
