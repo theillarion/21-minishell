@@ -13,6 +13,7 @@
 # include <stdlib.h>
 # include <signal.h>
 # include <stdbool.h>
+# include <sys/wait.h>
 # include <errno.h>
 
 typedef struct sigaction	t_sigaction;
@@ -91,7 +92,8 @@ void	ft_deinit(t_environment	*env);
 int		ft_exit(t_environment	*env, int status, bool is_clean);
 
 //		variable_env.c
-bool	ft_convert_to_struct(t_variable_env	*dst, const char	*src);
+bool	ft_convert_str_to_struct(t_variable_env	*dst, const char	*src);
+bool	ft_convert_vector_to_array(char	***dst,	const t_vector	*src);
 
 //		main.c
 int		main(int argc, char **argv, char    **envp);
