@@ -1,51 +1,14 @@
 #include "../includes/minishell.h"
-#include "../includes/ft_token.h"
 
-enum e_Token
+int preparse(t_environment *env)
 {
-	t_word,
-	t_word_exp,
-	t_pipe,
-	t_r_out,
-	t_r_in,
-	t_hd,
-	t_r_outa
-};
+	char *il;
 
-enum e_RedirType
-{
-	r_in,
-	r_out,
-	r_out_append,
-	r_here_doc
-};
-
-typedef struct s_token
-{
-	char	*start;
-	int		size;
-	int		type;
-}	t_token;
-
-typedef struct s_redir
-{
-	int r_type;
-	t_token *arg;
-}	t_redir;
-
-typedef struct s_command
-{
-	t_token *command;
-	t_vector args;
-	t_vector redirs;
-}	t_command;
-
-int preparse(char *input)
-{
 	// ToDo Write checks for bash syntax
-	while (*input)
+	il = env->input_line;
+	while (*il)
 	{
-		input++;
+		il++;
 	}
 	return (1);
 }
@@ -126,27 +89,29 @@ int get_token(char **input, t_vector *tokens)
 	return (res);
 }
 
-void lexer(char *input, t_vector *tokens)
+void lexer(t_environment *env)
 {
 	int token;
 	size_t 	i;
 	t_token *cur_token;
+	char *il;
 
-	token = get_token(&input, tokens);
+	il = env->input_line;
+	token = get_token(&il, &env->tokens);
 	printf("Типы токенов: "); // debug
 	while(token)
 	{
 		printf("%c", token); // debug
-		token = get_token(&input, tokens);
+		token = get_token(&il, &env->tokens);
 	}
 	// debug start
 	printf("\nКоличество токенов в векторе: ");
-	printf("ft_size: %zu\n", ft_size(tokens));
+	printf("ft_size: %zu\n", ft_size(&env->tokens));
 	i = -1;
 	printf("Вывод значений токенов: ");
-	while (++i < ft_size(tokens))
+	while (++i < ft_size(&env->tokens))
 	{
-		cur_token = (t_token *)ft_get_element(tokens, i);
+		cur_token = (t_token *)ft_get_element(&env->tokens, i);
 		printf("%s ", ft_substr(cur_token->start, 0, cur_token->size));
 	}
 	printf("\n");
@@ -199,24 +164,22 @@ void get_command(t_vector *groups, t_vector *tokens, size_t *i)
 	ft_push_back(groups, (void *)&cmd);
 }
 
-void parser(t_vector *tokens)
+void parser(t_environment *env)
 {
 	size_t i;
-	t_vector groups;
 	t_command *cur_cmd;
 
-	ft_init_vector(&groups, sizeof(t_command));
+	ft_init_vector(&env->groups, sizeof(t_command));
 	i = -1;
-	while (++i < ft_size(tokens))
-		get_command(&groups, tokens, &i);
+	while (++i < ft_size(&env->tokens))
+		get_command(&env->groups, &env->tokens, &i);
 	// debug start
 	i = -1;
 	printf("Команды: \n");
-	while (++i < ft_size(&groups))
+	while (++i < ft_size(&env->groups))
 	{
-		cur_cmd = (t_command *)ft_get_element(&groups, i);
+		cur_cmd = (t_command *)ft_get_element(&env->groups, i);
 		printf("┌команда───%s\n", ft_substr(cur_cmd->command->start, 0, cur_cmd->command->size));
-
 
 		if (ft_size(&cur_cmd->redirs))
 		{
@@ -256,32 +219,129 @@ void parser(t_vector *tokens)
 	printf("\n");
 	// debug end
 	i = -1;
-	while (++i < ft_size(&groups))
+	while (++i < ft_size(&env->groups))
 	{
-		cur_cmd = (t_command *) ft_get_element(&groups, i);
+		cur_cmd = (t_command *) ft_get_element(&env->groups, i);
 	}
 }
 
-int	main(int argc, char **argv, char **envp)
+void expand_vars(t_environment *env, int current)
 {
-//	t_vector	*tokens;
-	(void)		argc;
-	(void)		envp;
-	(void)		argv;
-	char*		in;
-	char		prompt[12] = "minishell: ";
-	t_vector	tokens;
 
-	in = readline(prompt);
-	while (in)
-	{
-		if (preparse(in))
-		{
-			ft_init_vector(&tokens, sizeof(t_token));
-			lexer(in, &tokens);
-			parser(&tokens);
-		}
-		add_history(in);
-		in = readline(prompt);
-	}
 }
+
+void	ft_exec_command(t_environment *env, t_command *cmd)
+{
+	char	**in_argv;
+	char 	*command;
+	char 	**envp;
+
+	command = ft_substr(cmd->command->start, 0, cmd->command->size);
+	envp = get_envp_array(env);
+	if (ft_strchr(command, '/') != NULL)
+		execve(command, , pipex.envp);
+	find_cmd_in_path(pipex, in_argv);
+}
+
+void	child_process(t_environment *env, int i, int pipe_fd[2][2])
+{
+	t_command *cur_cmd;
+
+	cur_cmd = (t_command *) ft_get_element(&env->groups, i);
+
+	//printf("┌команда───%s\n", ft_substr(cur_cmd->command->start, 0, cur_cmd->command->size));
+
+	//printf("├аргументы──");
+	size_t j = -1;
+	t_token *cur_arg;
+	while (++j < ft_size(&cur_cmd->args))
+	{
+		cur_arg = (t_token *)ft_get_element(&cur_cmd->args, j);
+		//printf("%d─%s──", cur_arg->type, ft_substr(cur_arg->start, 0, cur_arg->size));
+	}
+	//printf("\n");
+
+	//printf("└редиректы──");
+	size_t r=-1;
+	t_redir *cur_redir;
+	if (dup2(pipe_fd[! (i % 2)][0], 0) == -1)
+		ft_raise_error("dup2 error\n");
+	if (dup2(pipe_fd[i % 2][1], 1) == -1)
+		ft_raise_error("dup2 error\n");
+	while (++r < ft_size(&cur_cmd->redirs))
+	{
+		cur_redir = (t_redir *)ft_get_element(&cur_cmd->redirs, r);
+		if (cur_redir->r_type == t_r_in)
+			input_file_fd(cur_redir);
+		if (cur_redir->r_type == t_hd)
+			here_doc(cur_redir, pipe_fd[i % 2]);
+		if (cur_redir->r_type == t_r_out || cur_redir->r_type == t_r_outa)
+			output_file_fd(cur_redir);
+		//printf("%d─%s──", cur_redir->r_type, ft_substr(cur_redir->arg->start, 0, cur_redir->arg->size));
+	}
+
+
+//	if (i == 0)
+//	{
+//		if (!pipex->is_heredoc)
+//			input_file_fd(pipex);
+//		else
+//			here_doc(argv, pipe_fd[i % 2]);
+//	}
+////	else
+//	if (dup2(pipe_fd[! (i % 2)][0], 0) == -1)
+//		ft_raise_error("dup2 error\n");
+//	if (i == pipex->cmd_cnt - 1)
+//		output_file_fd(pipex);
+//	else
+//	if (dup2(pipe_fd[i % 2][1], 1) == -1)
+//		ft_raise_error("dup2 error\n");
+	ft_exec_command(cur_cmd);
+}
+
+int executor(t_environment *env)
+{
+	size_t	current;
+	pid_t	pid;
+	int		pipe_fd[2][2];
+
+	current = -1;
+	while (++current < ft_size(&env->groups))
+	{
+		expand_vars(&env, current);
+		pipe(pipe_fd[current % 2]);
+		pid = fork();
+		if (pid == -1)
+			ft_raise_error("fork error\n");
+		else if (pid == 0)
+			child_process(&env, current, pipe_fd);
+		else
+		if (close(pipe_fd[current % 2][1]) == -1)
+			ft_raise_error("close fd error\n");
+	}
+	return (pid);
+}
+
+//int	main(int argc, char **argv, char **envp)
+//{
+////	t_vector	*tokens;
+//	(void)		argc;
+//	(void)		envp;
+//	(void)		argv;
+//	char*		in;
+//	char		prompt[12] = "minishell: ";
+//	t_vector	tokens;
+//
+//	in = readline(prompt);
+//	while (in)
+//	{
+//		if (preparse(in))
+//		{
+//			ft_init_vector(&tokens, sizeof(t_token));
+//			lexer(in, &tokens);
+//			parser(&tokens);
+//		}
+//		add_history(in);
+//		in = readline(prompt);
+//	}
+//}

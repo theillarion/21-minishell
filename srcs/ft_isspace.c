@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include "../includes/ft_token.h"
 
 int	ft_isspace(int c)
 {

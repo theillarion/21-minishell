@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../includes/minishell.h"
 
 void	ft_get_line(t_environment	*env)
 {
@@ -27,11 +27,17 @@ int main(int argc, char **argv, char    **envp)
 		printf("Error!\n");
 	}
 	ft_get_line(&env);
-	ft_command_env(&env);
+//	ft_command_env(&env);
 	while (env.input_line)
 	{
+		if (preparse(&env))
+		{
+			ft_init_vector(&env.tokens, sizeof(t_token));
+			lexer(&env);
+			parser(&env);
+		}
 		ft_get_line(&env);
-		ft_command_unset(&env, env.input_line);
-		ft_command_env(&env);
+		//ft_command_unset(&env, env.input_line);
+//		ft_command_env(&env);
 	}
 }
