@@ -3,7 +3,7 @@ NAME_D		=	$(NAME)_debug
 
 CC			=	clang
 FLAGS		=	-Wall -Werror -Wextra
-FLAGS_D		=	-g
+FLAGS_D		=	-gdwarf-4
 
 LIB_NAME_S		=	ft
 LIB_NAME_S_D	=	ft_debug

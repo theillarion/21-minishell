@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "minishell.h"
 
 int	preparse(t_environment *env)
 {
@@ -18,21 +18,8 @@ int	get_token(char **input, t_vector *tokens)
 	int res;
 	t_token ttoken;
 
-	//ft_reserve(tokens, tokens->capacity + 1);
-	res = 0;
 	while (**input && ft_isspace(**input))
-	{
 		*input = *input + 1;
-		res = 's';
-	}
-//	if (res)
-//	{
-//		ttoken.start = *input - 1;
-//		ttoken.type = t_sep;
-//		ttoken.size = 1;
-//		ft_push_back(tokens, &ttoken);
-//		return (res);
-//	}
 	if (!(**input))
 		return (0);
 	res = (unsigned char)**input;
@@ -77,44 +64,11 @@ int	get_token(char **input, t_vector *tokens)
 		ttoken.start = *input;
 		ttoken.type = t_word_exp;
 		while (**input && !(ft_strchr("<>|", **input)) && !ft_isspace(**input))
-		{
-//			if (ft_strchr("\'", **input))
-//			{
-//				ttoken.size = *input - ttoken.start;
-//				if (ttoken.size)
-//					ft_push_back(tokens, (void *)&ttoken);
-//				*input = *input + 1;
-//				//return (res);
-//				ttoken.start = *input;
-//				while (**input && !ft_strchr("\'", **input))
-//					*input = *input + 1;
-//				ttoken.size = *input - ttoken.start;
-//				if (ttoken.size)
-//					ft_push_back(tokens, (void *)&ttoken);
-//				return (res);
-//			}
-//			if (ft_strchr("\"", **input))
-//			{
-//				ttoken.size = *input - ttoken.start;
-//				if (ttoken.size)
-//					ft_push_back(tokens, (void *)&ttoken);
-//				*input = *input + 1;
-//				//return (res);
-//				ttoken.start = *input;
-//				while (**input && !ft_strchr("\"", **input))
-//					*input = *input + 1;
-//				ttoken.size = *input - ttoken.start;
-//				if (ttoken.size)
-//					ft_push_back(tokens, (void *)&ttoken);
-//				return (res);
-//			}
 			*input = *input + 1;
-		}
-		ttoken.size = *input - ttoken.start;
+		ttoken.size = (int)(*input - ttoken.start);
 		if (ttoken.size)
 			ft_push_back(tokens, (void *)&ttoken);
     }
-	//*input = *input + 1;
 	return (res);
 }
 
@@ -149,8 +103,8 @@ void	lexer(t_environment *env)
 
 int	add_redirect(t_vector *redirs, t_token *token, t_vector *tokens, size_t *i)
 {
-	t_redir redir;
-	t_token *next_token;
+	t_redir	redir;
+	t_token	*next_token;
 
 	if (token->type != t_r_in && token->type != t_r_out && token->type != t_r_outa && token->type != t_hd)
 		return (0);
@@ -164,93 +118,128 @@ int	add_redirect(t_vector *redirs, t_token *token, t_vector *tokens, size_t *i)
 	return (1);
 }
 
-void find_expandable_word()
-
-void find_expandable(const char *current_string, char **expandable_beginning,
-					 char **expandable_ending)
+char	*str_slash(char *current_string, int *i)
 {
-	int is_expanding_zone;
-	int in_qoute_zone;
-	char *string;
+	char	*result;
+	char	*firstpart;
+	char	*lastpart;
 
-	is_expanding_zone = 1;
-	in_qoute_zone = 0;
-	string = (char *)current_string;
-	while (*string)
+	firstpart = ft_substr(current_string, 0, *i);
+	lastpart = ft_strdup(current_string + *i);
+	result = ft_strjoin(firstpart, lastpart);
+	return (result);
+}
+
+char	*str_qoutes(char *current_string, int *i)
+{
+	int		beginning;
+	char	*firstpart;
+	char	*in_qoutes_part;
+	char	*lastpart;
+	char	*result;
+
+	beginning = *i;
+	while (current_string[++*i])
 	{
-		if (*string == '\'')
-		{
-			while (*string != '\'')
-				string++;
-		}
-		if (*string == '\"')
-		{
-
-		}
-		if (*string == '$')
-		{
-
-		}
-		string++;
+		if (current_string[*i] == '\'')
+			break ;
 	}
+	firstpart = ft_substr(current_string, 0, beginning);
+	in_qoutes_part = ft_substr(current_string, beginning + 1, (*i - beginning - 1));
+	lastpart = ft_strdup(current_string + *i + 1);
+	result = ft_strjoin(firstpart, in_qoutes_part);
+	result = ft_strjoin(result, lastpart);
+	printf("quotes res:%s\n", result);
+	return (result);
+}
 
-	(*expandable_beginning) = ft_strchr(current_string, '$');
-	if ((*expandable_beginning))
+char *str_expanding(char *current_string, int *i, t_environment *env)
+{
+	int				beginning;
+	char			*result;
+	char			*firstpart;
+	char			*var_name;
+	size_t			var_index;
+	char			*var_value;
+	char			*lastpart;
+	t_variable_env	*var_element;
+
+	beginning = *i;
+	while (current_string[++(*i)])
 	{
-		(*expandable_ending) = (*expandable_beginning) + 1;
-		while ((*expandable_ending))
-		{
-			if (!ft_isalnum(*(*expandable_ending)))
-				break;
-			(*expandable_ending)++;
-		}
+		if (!ft_isalnum(current_string[*i]) && current_string[*i] != '_')
+			break;
 	}
+	firstpart = ft_substr(current_string, 0, beginning);
+	var_name = ft_substr(current_string, beginning + 1, *i - beginning - 1);
+	var_index = ft_find_by_name(&env->variables_env, var_name);
+	var_element = ft_get_element(&env->variables_env, var_index);
+	if (var_element)
+		var_value = var_element->value;
+	else
+		var_value = ft_strdup("");
+	lastpart = ft_strdup(current_string + *i);
+	if (ft_strlen(var_name) > ft_strlen(var_value))
+		*i = *i - (int)(ft_strlen(var_name) - ft_strlen(var_value));
+	result = ft_strjoin(firstpart, var_value);
+	result = ft_strjoin(result, lastpart);
+	return (result);
+}
+
+char	*str_double_qoutes(char *current_string, int *i, t_environment *env)
+{
+	int		beginning;
+	char	*firstpart;
+	char	*in_qoutes_part;
+	char	*lastpart;
+	char	*result;
+
+	beginning = *i;
+	while (current_string[++(*i)])
+	{
+		if (current_string[*i] == '\\' && (current_string[*i + 1] == '\\' || current_string[*i + 1] == '$' || current_string[*i + 1] == '\"'))
+			current_string = str_slash(current_string, i);
+		if (current_string[*i] == '$')
+			current_string = str_expanding(current_string, i, env);
+		if (current_string[*i] == '\"')
+			break ;
+	}
+	firstpart = ft_substr(current_string, 0, beginning);
+	in_qoutes_part = ft_substr(current_string, beginning + 1, (*i - beginning - 1));
+	lastpart = ft_strdup(current_string + *i + 1);
+	result = ft_strjoin(firstpart, in_qoutes_part);
+	result = ft_strjoin(result, lastpart);
+	printf("double quotes res:%s\n", result);
+	return (result);
 }
 
 void	expand_word(t_environment *env, char **start, int *size)
 {
-	char *current_string;
-	char *expandable_beginning;
-	char *expandable_ending;
-	size_t pos;
-	t_variable_env *var;
-	char *found_variable;
-	char *firstpart;
-	char *lastpart;
+	char	*current_string;
+	int		i;
 
 	current_string = ft_substr(*start, 0, *size);
-	find_expandable(current_string, &expandable_beginning, &expandable_ending);
-	while (expandable_beginning)
+	i = -1;
+	while (current_string[++i])
 	{
-		expandable_beginning++;
-		pos = ft_find_by_name(&env->variables_env, ft_substr(expandable_beginning, 0, expandable_ending - expandable_beginning));
-		if (pos == SIZE_MAX)
-		{
-			found_variable = ft_strdup("");
-			*size = 0;
-		}
-		else
-		{
-			var = (t_variable_env *) ft_get_element(&env->variables_env, pos);
-			found_variable = ft_strdup(var->value);
-		}
-		firstpart = ft_substr(current_string, 0, expandable_beginning - current_string - 1);
-		lastpart = ft_substr(current_string, expandable_ending - current_string, ft_strlen(current_string) - 1);
-		current_string = ft_strjoin(firstpart, found_variable);
-		current_string = ft_strjoin(current_string, lastpart);
-
-		find_expandable(current_string, &expandable_beginning,
-						&expandable_ending);
+		if (current_string[i] == '\'')
+			current_string = str_qoutes(current_string, &i);
+		if (current_string[i] == '\\')
+			current_string = str_slash(current_string, &i);
+		if (current_string[i] == '\"')
+			current_string = str_double_qoutes(current_string, &i, env);
+		if (current_string[i] == '$')
+			current_string = str_expanding(current_string, &i, env);
 	}
 	*start = current_string;
-	*size = ft_strlen(current_string);
+	*size = (int)ft_strlen(current_string);
 }
 
 void	get_command(t_environment *env, size_t *i)
 {
-	t_command cmd;
-	t_token *cur_token;
-	int com_added;
+	t_command	cmd;
+	t_token		*cur_token;
+	int			com_added;
 
 	ft_init_vector(&cmd.redirs, sizeof(t_redir));
 	ft_init_vector(&cmd.args, sizeof(t_vector));
@@ -271,10 +260,6 @@ void	get_command(t_environment *env, size_t *i)
 			}
 			ft_push_back(&cmd.args, (void *)cur_token);
 		}
-		if (cur_token->type == t_sep)
-		{
-			ft_push_back(&cmd.args, (void *)cur_token);
-		}
 		(*i)++;
 	}
 	ft_push_back(&env->groups, (void *)&cmd);
@@ -282,8 +267,8 @@ void	get_command(t_environment *env, size_t *i)
 
 void	parser(t_environment *env)
 {
-	size_t i;
-	t_command *cur_cmd;
+	size_t		i;
+	t_command	*cur_cmd;
 
 	ft_init_vector(&env->groups, sizeof(t_command));
 	i = -1;
@@ -334,11 +319,6 @@ void	parser(t_environment *env)
 	}
 	printf("\n");
 	// debug end
-	i = -1;
-	while (++i < ft_size(&env->groups))
-	{
-		cur_cmd = (t_command *) ft_get_element(&env->groups, i);
-	}
 }
 
 void	free_paths(char	**paths)
@@ -423,6 +403,8 @@ void	ft_exec_command(t_environment *env, t_command *cmd)
 	char 	**args;
 
 	command = ft_substr(cmd->command->start, 0, cmd->command->size);
+	if (ft_strlen(command) == 0)
+		exit(0);
 	ft_convert_vector_to_array(&envp, &env->variables_env);
 	ft_convert_token_vector_to_str_array(&args, &cmd->args);
 	if (ft_strchr(command, '/') != NULL)
@@ -432,23 +414,9 @@ void	ft_exec_command(t_environment *env, t_command *cmd)
 
 void	child_process(t_environment *env, size_t i, int pipe_fd[2][2])
 {
-	t_command *cur_cmd;
+	t_command	*cur_cmd;
 
 	cur_cmd = (t_command *) ft_get_element(&env->groups, i);
-
-	//printf("┌команда───%s\n", ft_substr(cur_cmd->command->start, 0, cur_cmd->command->size));
-
-	//printf("├аргументы──");
-//	size_t j = -1;
-//	t_token *cur_arg;
-//	while (++j < ft_size(&cur_cmd->args))
-//	{
-//		cur_arg = (t_token *)ft_get_element(&cur_cmd->args, j);
-		//printf("%d─%s──", cur_arg->type, ft_substr(cur_arg->start, 0, cur_arg->size));
-//	}
-	//printf("\n");
-
-	//printf("└редиректы──");
 	size_t r=-1;
 	t_redir *cur_redir;
 	if (i != 0)
@@ -470,25 +438,7 @@ void	child_process(t_environment *env, size_t i, int pipe_fd[2][2])
 			here_doc(cur_redir, pipe_fd[i % 2]);
 		if (cur_redir->r_type == t_r_out || cur_redir->r_type == t_r_outa)
 			output_file_fd(cur_redir);
-		//printf("%d─%s──", cur_redir->r_type, ft_substr(cur_redir->arg->start, 0, cur_redir->arg->size));
 	}
-
-
-//	if (i == 0)
-//	{
-//		if (!pipex->is_heredoc)
-//			input_file_fd(pipex);
-//		else
-//			here_doc(argv, pipe_fd[i % 2]);
-//	}
-////	else
-//	if (dup2(pipe_fd[! (i % 2)][0], 0) == -1)
-//		ft_raise_error("dup2 error\n");
-//	if (i == pipex->cmd_cnt - 1)
-//		output_file_fd(pipex);
-//	else
-//	if (dup2(pipe_fd[i % 2][1], 1) == -1)
-//		ft_raise_error("dup2 error\n");
 	ft_exec_command(env, cur_cmd);
 }
 

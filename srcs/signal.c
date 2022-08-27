@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void    ft_handler(int sig, siginfo_t	*info, void	*ucontext)
+void    ft_handler(int sig, siginfo_t *info, void	*ucontext)
 {
     (void)info;
     (void)ucontext;

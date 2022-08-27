@@ -1,11 +1,11 @@
-#include "../includes/minishell.h"
+#include "minishell.h"
 
 static bool	ft_check_var_name(const char	*str)
 {
 	while (str && *str)
 	{
-		if (ft_tolower(*str) == *str && *str != '_')
-			return (false);
+//		if (ft_tolower(*str) == *str && *str != '_' && !(ft_isdigit(*str)))
+//			return (false);
 		++str;
 	}
 	return (true);
@@ -77,8 +77,6 @@ bool	ft_convert_token_vector_to_str_array(char	***dst,	const t_vector	*src)
 	while (++i < ft_size(src))
 	{
 		token = (t_token *)ft_get_element(src, i);
-		if (token->type == t_sep)
-			continue;
 		str = ft_substr(token->start, 0, token->size);
 		if (str == NULL)
 			return (false);
