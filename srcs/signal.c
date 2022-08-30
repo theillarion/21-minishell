@@ -9,6 +9,9 @@ void    ft_handler(int sig, siginfo_t	*info, void	*ucontext)
 		return;
 	rl_on_new_line();
 	ft_readline_insert("  ");
+/*	rl_on_new_line();
+	rl_replace_line("", 0);
+	//rl_redisplay();*/
     if (sig == SIGINT)
     {
 		write(STDOUT_FILENO, "\n", 1);
