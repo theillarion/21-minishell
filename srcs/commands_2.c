@@ -35,6 +35,12 @@ int ft_command_export(t_environment	*env, const char	*arg)
 		if (index < ft_size(&env->variables_env))
 			ft_erase(&env->variables_env, index);
 		ft_push(&env->variables_env, arg);
+		env->is_need_update_envp = true;
 	}
 	return (SUCCESS);
+}
+
+int ft_command_echo(t_environment	*env, const char	*arg)
+{
+	// SOON...
 }
