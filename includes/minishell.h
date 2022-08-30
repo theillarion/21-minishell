@@ -14,6 +14,8 @@
 # include <signal.h>
 # include <stdbool.h>
 # include <sys/wait.h>
+# include <sys/stat.h>
+# include <sys/types.h>
 # include <errno.h>
 
 typedef struct sigaction	t_sigaction;
@@ -33,7 +35,7 @@ typedef struct s_info
 typedef struct s_variable_env
 {
 	char	*name;
-	char	*value;
+	char	**values;
 }			t_variable_env;
 
 enum e_status
@@ -48,9 +50,18 @@ typedef	struct s_environment
 	t_info		info;
 	t_sigaction	action;
 	t_vector	variables_env;
+	t_vector	functions;
+	char		**envp;
+	bool		is_need_update_envp;
 	char		*input_line;
 	int			last_code;
 }				t_environment;
+
+typedef struct s_function
+{
+	char *name;
+	int (*func)(t_environment *, const char *);
+}		t_function;
 
 void	ft_push(t_vector	*vector, const char	*string_var);
 size_t	ft_find_by_name(const t_vector	*vector, const char	*name);
@@ -59,7 +70,7 @@ size_t	ft_find_by_name(const t_vector	*vector, const char	*name);
 void	ft_set_new_prompt(t_prompt	*prompt, t_info	info);
 
 //		init.c
-void	ft_init(t_environment	*env, const char	**envp,
+void	ft_init(t_environment	*env, char	**envp,
 				const char	*name_shell);
 //		error.c
 void	ft_error(const char	*name_shell, const char	*err_msg);
@@ -67,13 +78,14 @@ void	ft_error(const char	*name_shell, const char	*err_msg);
 //		commands.c
 char	*ft_get_pwd(void);
 int		ft_command_cd(t_environment 	*env, const char	*arg);
-int		ft_command_pwd(t_environment	*env);
-int		ft_command_env(const t_environment	*env);
+int		ft_command_pwd(t_environment	*env, const char	*arg);
+int		ft_command_env(t_environment	*env, const char	*arg);
 int		ft_command_unset(t_environment	*env, const char	*arg);
 
 //		commands_2.c
 int		ft_command_exit(t_environment 	*env, const char	*arg);
 int		ft_command_export(t_environment	*env, const char	*arg);
+int		ft_command_echo(t_environment	*env, const char	*arg);
 
 //		utilities_readline.c
 void	ft_readline_insert(const char	*str);
@@ -94,6 +106,10 @@ int		ft_exit(t_environment	*env, int status, bool is_clean);
 //		variable_env.c
 bool	ft_convert_str_to_struct(t_variable_env	*dst, const char	*src);
 bool	ft_convert_vector_to_array(char	***dst,	const t_vector	*src);
+
+//		file_utilities.c
+bool	ft_is_regular_file(char const *path);
+bool	ft_is_exist(char const *path);
 
 //		main.c
 int		main(int argc, char **argv, char    **envp);
