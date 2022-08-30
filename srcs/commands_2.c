@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-int	ft_command_exit(t_environment 	*env, const char	*arg)
+int	ft_command_exit(t_environment *env, const char	*arg)
 {
 	int		code;
 	bool	is_error;
@@ -24,7 +24,7 @@ int	ft_command_exit(t_environment 	*env, const char	*arg)
 	}
 }
 
-int ft_command_export(t_environment	*env, const char	*arg)
+int	ft_command_export(t_environment	*env, const char	*arg)
 {
 	t_variable_env	var_env;
 	size_t			index;
@@ -35,6 +35,12 @@ int ft_command_export(t_environment	*env, const char	*arg)
 		if (index < ft_size(&env->variables_env))
 			ft_erase(&env->variables_env, index);
 		ft_push(&env->variables_env, arg);
+		env->is_need_update_envp = true;
 	}
 	return (SUCCESS);
+}
+
+int	ft_command_echo(t_environment	*env, const char	*arg)
+{
+	// SOON...
 }

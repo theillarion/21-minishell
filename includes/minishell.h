@@ -1,21 +1,22 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include <stdio.h>
-# include <stdlib.h>
-# include <unistd.h>
-# include <signal.h>
-# include <stdbool.h>
-# include <errno.h>
-# include <sys/types.h>
-# include <fcntl.h>
-# include <sys/wait.h>
-
 # include <readline/readline.h>
 # include <readline/history.h>
 
 # include "../lib/libft/libft.h"
 # include "../lib/libvector/includes/vector.h"
+
+# include <unistd.h>
+# include <stdlib.h>
+# include <signal.h>
+# include <stdbool.h>
+# include <sys/wait.h>
+# include <sys/stat.h>
+# include <sys/types.h>
+# include <errno.h>
+# include <fcntl.h>
+
 # include "get_next_line.h"
 
 typedef struct sigaction	t_sigaction;
@@ -35,7 +36,7 @@ typedef struct s_info
 typedef struct s_variable_env
 {
 	char	*name;
-	char	*value;
+	char	**values;
 }			t_variable_env;
 
 enum e_status
@@ -73,12 +74,16 @@ typedef struct s_environment
 	t_info		info;
 	t_sigaction	action;
 	t_vector	variables_env;
+	t_vector	functions;
+	char		**envp;
+	bool		is_need_update_envp;
 	char		*input_line;
 	int			last_code;
 	t_vector	tokens;
 	t_vector	groups;
 }				t_environment;
 
+<<<<<<< HEAD
 typedef struct s_command
 {
 	t_token		*command;
@@ -86,6 +91,13 @@ typedef struct s_command
 	t_vector	redirs;
 	int			(*builtin)(t_environment *, char *args);
 }				t_command;
+=======
+typedef struct s_function
+{
+	char *name;
+	int (*func)(t_environment *, const char *);
+}		t_function;
+>>>>>>> dev_illarion
 
 void	ft_push(t_vector	*vector, const char	*string_var);
 size_t	ft_find_by_name(const t_vector	*vector, const char	*name);
@@ -94,21 +106,34 @@ size_t	ft_find_by_name(const t_vector	*vector, const char	*name);
 void	ft_set_new_prompt(t_prompt	*prompt, t_info	info);
 
 //		init.c
+<<<<<<< HEAD
 void	ft_init(t_environment	*env, const char	**envp,
 			const char	*name_shell);
+=======
+void	ft_init(t_environment	*env, char	**envp,
+				const char	*name_shell);
+>>>>>>> dev_illarion
 //		error.c
 void	ft_error(const char	*name_shell, const char	*err_msg);
 
 //		commands.c
 char	*ft_get_pwd(void);
+<<<<<<< HEAD
 int		ft_command_cd(t_environment *env, const char	*arg);
 int		ft_command_pwd(t_environment *env, const char	*arg);
 int		ft_command_env(t_environment *env, const char	*arg);
 int		ft_command_unset(t_environment *env, const char	*arg);
+=======
+int		ft_command_cd(t_environment 	*env, const char	*arg);
+int		ft_command_pwd(t_environment	*env, const char	*arg);
+int		ft_command_env(t_environment	*env, const char	*arg);
+int		ft_command_unset(t_environment	*env, const char	*arg);
+>>>>>>> dev_illarion
 
 //		commands_2.c
 int		ft_command_exit(t_environment *env, const char	*arg);
 int		ft_command_export(t_environment	*env, const char	*arg);
+int		ft_command_echo(t_environment	*env, const char	*arg);
 
 //		utilities_readline.c
 void	ft_readline_insert(const char	*str);
@@ -129,6 +154,7 @@ int		ft_exit(t_environment	*env, int status, bool is_clean);
 //		variable_env.c
 bool	ft_convert_str_to_struct(t_variable_env	*dst, const char	*src);
 bool	ft_convert_vector_to_array(char	***dst,	const t_vector	*src);
+<<<<<<< HEAD
 bool	ft_convert_token_vector_to_str_array(char	***dst,	const t_vector	*src);
 
 //		in_out_files.c
@@ -165,6 +191,12 @@ void	find_cmd_in_path(char **args, char **envp);
 
 //		executor.c
 int		executor(t_environment *env);
+=======
+
+//		file_utilities.c
+bool	ft_is_regular_file(char const *path);
+bool	ft_is_exist(char const *path);
+>>>>>>> dev_illarion
 
 //		main.c
 int		main(int argc, char **argv, char **envp);

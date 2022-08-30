@@ -2,18 +2,28 @@
 
 static bool	ft_check_var_name(const char	*str)
 {
+<<<<<<< HEAD
 	while (str && *str)
 	{
 //		if (ft_tolower(*str) == *str && *str != '_' && !(ft_isdigit(*str)))
 //			return (false);
 		++str;
 	}
+=======
+	if (str == NULL || ft_isdigit(*str) == 1)
+		return (false);
+	//...
+>>>>>>> dev_illarion
 	return (true);
 }
 
 bool	ft_convert_str_to_struct(t_variable_env	*dst, const char	*src)
 {
 	char	*ptr;
+<<<<<<< HEAD
+=======
+	char	*value;
+>>>>>>> dev_illarion
 	size_t	length;
 
 	length = ft_strlen(src);
@@ -21,12 +31,22 @@ bool	ft_convert_str_to_struct(t_variable_env	*dst, const char	*src)
 	if (ptr == NULL || ptr == src)
 		return (false);
 	dst->name = ft_substr(src, 0, (size_t)((ptr - src) / sizeof(*src)));
+<<<<<<< HEAD
 	dst->value = ft_substr(src, (size_t)(ptr - src + 1), length - (size_t)(ptr - src + 1));
 	if (dst->name == NULL || ft_check_var_name(dst->name) == false || dst->value == NULL)
+=======
+	value = ft_substr(src, (size_t)(ptr - src + 1), length - (size_t)(ptr - src + 1));
+	if (dst->name == NULL || ft_check_var_name(dst->name) == false || value == NULL)
+		return (false);
+	dst->values = ft_split(value, ':');
+	ft_smart_free((void **)&value);
+	if (dst->values == NULL)
+>>>>>>> dev_illarion
 		return (false);
 	return (true);
 }
 
+<<<<<<< HEAD
 static char	*ft_get_str(const t_variable_env	*var_env)
 {
 	char	*result;
@@ -36,6 +56,47 @@ static char	*ft_get_str(const t_variable_env	*var_env)
 	backup = result;
 	result = ft_strjoin(result, var_env->value);
 	ft_smart_free((void **)&backup);
+=======
+static size_t ft_calc_length(const t_variable_env	*var_env)
+{
+	size_t	result;
+	char	**ptr;
+
+	result = 0;
+	if (var_env == NULL)
+		return (result);
+	result = ft_strlen(var_env->name) + 1;
+	ptr = var_env->values;
+	while (*ptr)
+		result += ft_strlen(*(ptr++));
+	result += (size_t)(ptr - var_env->values) - 1;
+	return (result);
+}
+
+static char	*ft_get_str(const t_variable_env	*var_env)
+{
+	char	*result;
+	char	**ptr;
+	size_t	length;
+	size_t	i;
+
+	length = ft_calc_length(var_env);
+	result = (char *)malloc((length + 1) * sizeof(*result));
+	i = ft_strlen(var_env->name);
+	memcpy(result, var_env->name, sizeof(*var_env->name) * i);
+	result[i++] = '=';
+	ptr = var_env->values;
+	while (*ptr)
+	{
+		length = ft_strlen(*ptr);
+		memcpy(result + i, *ptr, sizeof(**ptr) * length);
+		i += length;
+		if (!*(ptr + 1))
+			result[i++] = ':';
+		++ptr;
+	}
+	result[i] = '\0';
+>>>>>>> dev_illarion
 	return (result);
 }
 
@@ -61,6 +122,7 @@ bool	ft_convert_vector_to_array(char	***dst,	const t_vector	*src)
 	(*dst)[i] = NULL;
 	return (true);
 }
+<<<<<<< HEAD
 
 bool	ft_convert_token_vector_to_str_array(char	***dst,	const t_vector	*src)
 {
@@ -85,3 +147,5 @@ bool	ft_convert_token_vector_to_str_array(char	***dst,	const t_vector	*src)
 	(*dst)[i] = NULL;
 	return (true);
 }
+=======
+>>>>>>> dev_illarion
