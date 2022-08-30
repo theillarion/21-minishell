@@ -14,23 +14,23 @@ char	*str_slash(char *current_string, int *i)
 	return (result);
 }
 
-char	*str_qoutes(char *current_string, int *i)
+char	*str_qoutes(char *current_str, int *i)
 {
-	int		beginning;
+	int		begin;
 	char	*firstpart;
 	char	*in_qoutes_part;
 	char	*lastpart;
 	char	*result;
 
-	beginning = *i;
-	while (current_string[++*i])
+	begin = *i;
+	while (current_str[++*i])
 	{
-		if (current_string[*i] == '\'')
+		if (current_str[*i] == '\'')
 			break ;
 	}
-	firstpart = ft_substr(current_string, 0, beginning);
-	in_qoutes_part = ft_substr(current_string, beginning + 1, (*i - beginning - 1));
-	lastpart = ft_strdup(current_string + *i + 1);
+	firstpart = ft_substr(current_str, 0, begin);
+	in_qoutes_part = ft_substr(current_str, begin + 1, (*i - begin - 1));
+	lastpart = ft_strdup(current_str + *i + 1);
 	result = ft_strjoin(firstpart, in_qoutes_part);
 	free(firstpart);
 	free(in_qoutes_part);
@@ -41,7 +41,7 @@ char	*str_qoutes(char *current_string, int *i)
 	return (result);
 }
 
-char *str_expanding(char *current_string, int *i, t_environment *env)
+char	*str_expanding(char *current_string, int *i, t_environment *env)
 {
 	int				beginning;
 	char			*result;
@@ -56,7 +56,7 @@ char *str_expanding(char *current_string, int *i, t_environment *env)
 	while (current_string[++(*i)])
 	{
 		if (!ft_isalnum(current_string[*i]) && current_string[*i] != '_')
-			break;
+			break ;
 	}
 	firstpart = ft_substr(current_string, 0, beginning);
 	var_name = ft_substr(current_string, beginning + 1, *i - beginning - 1);
@@ -74,27 +74,27 @@ char *str_expanding(char *current_string, int *i, t_environment *env)
 	return (result);
 }
 
-char	*str_double_qoutes(char *current_string, int *i, t_environment *env)
+char	*str_double_qoutes(char *current_str, int *i, t_environment *env)
 {
-	int		beginning;
+	int		begin;
 	char	*firstpart;
 	char	*in_qoutes_part;
 	char	*lastpart;
 	char	*result;
 
-	beginning = *i;
-	while (current_string[++(*i)])
+	begin = *i;
+	while (current_str[++(*i)])
 	{
-		if (current_string[*i] == '\\' && (current_string[*i + 1] == '\\' || current_string[*i + 1] == '$' || current_string[*i + 1] == '\"'))
-			current_string = str_slash(current_string, i);
-		if (current_string[*i] == '$')
-			current_string = str_expanding(current_string, i, env);
-		if (current_string[*i] == '\"')
+		if (current_str[*i] == '\\' && (current_str[*i + 1] == '\\' || current_str[*i + 1] == '$' || current_str[*i + 1] == '\"'))
+			current_str = str_slash(current_str, i);
+		if (current_str[*i] == '$')
+			current_str = str_expanding(current_str, i, env);
+		if (current_str[*i] == '\"')
 			break ;
 	}
-	firstpart = ft_substr(current_string, 0, beginning);
-	in_qoutes_part = ft_substr(current_string, beginning + 1, (*i - beginning - 1));
-	lastpart = ft_strdup(current_string + *i + 1);
+	firstpart = ft_substr(current_str, 0, begin);
+	in_qoutes_part = ft_substr(current_str, begin + 1, (*i - begin - 1));
+	lastpart = ft_strdup(current_str + *i + 1);
 	result = ft_strjoin(firstpart, in_qoutes_part);
 	result = ft_strjoin(result, lastpart);
 	return (result);

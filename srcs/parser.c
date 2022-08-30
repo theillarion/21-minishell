@@ -32,7 +32,7 @@ void	get_command(t_environment *env, size_t *i)
 		cur_token = (t_token *)ft_get_element(&env->tokens, *i);
 		expand_word(env, &cur_token->start, &cur_token->size);
 		if (cur_token->type == t_pipe)
-			break;
+			break ;
 		add_redirect(&cmd.redirs, cur_token, &env->tokens, i);
 		if (cur_token->type == t_word)
 		{
@@ -56,50 +56,4 @@ void	parser(t_environment *env)
 	i = -1;
 	while (++i < ft_size(&env->tokens))
 		get_command(env, &i);
-	// debug start
-//	t_command	*cur_cmd;
-//	i = -1;
-//	printf("Команды: \n");
-//	while (++i < ft_size(&env->groups))
-//	{
-//		cur_cmd = (t_command *)ft_get_element(&env->groups, i);
-//		printf("┌команда──%s\n", ft_substr(cur_cmd->command->start, 0, cur_cmd->command->size));
-//
-//		if (ft_size(&cur_cmd->redirs))
-//		{
-//			printf("├аргументы──");
-//			size_t j = -1;
-//			t_token *cur_arg;
-//			while (++j < ft_size(&cur_cmd->args))
-//			{
-//				cur_arg = (t_token *)ft_get_element(&cur_cmd->args, j);
-//				printf("%d─%s──", cur_arg->type, ft_substr(cur_arg->start, 0, cur_arg->size));
-//			}
-//			printf("\n");
-//
-//			printf("└редиректы──");
-//			size_t r=-1;
-//			t_redir *cur_redir;
-//			while (++r < ft_size(&cur_cmd->redirs))
-//			{
-//				cur_redir = (t_redir *)ft_get_element(&cur_cmd->redirs, r);
-//				printf("%d─%s──", cur_redir->r_type, ft_substr(cur_redir->arg->start, 0, cur_redir->arg->size));
-//			}
-//			printf("\n");
-//		}
-//		else
-//		{
-//			printf("└аргументы──");
-//			size_t j = -1;
-//			t_token *cur_arg;
-//			while (++j < ft_size(&cur_cmd->args))
-//			{
-//				cur_arg = (t_token *)ft_get_element(&cur_cmd->args, j);
-//				printf("%d─%s──", cur_arg->type, ft_substr(cur_arg->start, 0, cur_arg->size));
-//			}
-//			printf("\n");
-//		}
-//	}
-//	printf("\n");
-	// debug end
 }

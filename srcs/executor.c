@@ -2,9 +2,9 @@
 
 void	ft_exec_command(t_environment *env, t_command *cmd)
 {
-	char 	*command;
-	char 	**envp;
-	char 	**args;
+	char	*command;
+	char	**envp;
+	char	**args;
 
 	command = ft_substr(cmd->command->start, 0, cmd->command->size);
 	if (ft_strlen(command) == 0)
@@ -19,10 +19,11 @@ void	ft_exec_command(t_environment *env, t_command *cmd)
 void	child_process(t_environment *env, size_t i, int pipe_fd[2][2])
 {
 	t_command	*cur_cmd;
+	size_t		r;
+	t_redir		*cur_redir;
 
 	cur_cmd = (t_command *) ft_get_element(&env->groups, i);
-	size_t r=-1;
-	t_redir *cur_redir;
+	r = -1;
 	if (i != 0)
 	{
 		if (dup2(pipe_fd[!(i % 2)][0], 0) == -1)
@@ -46,7 +47,6 @@ void	child_process(t_environment *env, size_t i, int pipe_fd[2][2])
 	ft_exec_command(env, cur_cmd);
 }
 
-
 int	executor(t_environment *env)
 {
 	size_t	current;
@@ -63,8 +63,10 @@ int	executor(t_environment *env)
 		else if (pid == 0)
 			child_process(env, current, pipe_fd);
 		else
-		if (close(pipe_fd[current % 2][1]) == -1)
-			ft_raise_error("close fd error\n");
+		{
+			if (close(pipe_fd[current % 2][1]) == -1)
+				ft_raise_error("close fd error\n");
+		}
 	}
 	return (pid);
 }

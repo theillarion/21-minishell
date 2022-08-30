@@ -63,11 +63,11 @@ typedef struct s_token
 
 typedef struct s_redir
 {
-	int r_type;
-	t_token *arg;
+	int		r_type;
+	t_token	*arg;
 }	t_redir;
 
-typedef	struct s_environment
+typedef struct s_environment
 {
 	t_prompt	prompt;
 	t_info		info;
@@ -75,9 +75,8 @@ typedef	struct s_environment
 	t_vector	variables_env;
 	char		*input_line;
 	int			last_code;
-	t_vector 	tokens;
-	t_vector 	groups;
-	t_vector	builtins;
+	t_vector	tokens;
+	t_vector	groups;
 }				t_environment;
 
 typedef struct s_command
@@ -85,7 +84,7 @@ typedef struct s_command
 	t_token		*command;
 	t_vector	args;
 	t_vector	redirs;
-	int (*builtin)(t_environment *, char *args);
+	int			(*builtin)(t_environment *, char *args);
 }				t_command;
 
 void	ft_push(t_vector	*vector, const char	*string_var);
@@ -96,19 +95,19 @@ void	ft_set_new_prompt(t_prompt	*prompt, t_info	info);
 
 //		init.c
 void	ft_init(t_environment	*env, const char	**envp,
-				const char	*name_shell);
+			const char	*name_shell);
 //		error.c
 void	ft_error(const char	*name_shell, const char	*err_msg);
 
 //		commands.c
 char	*ft_get_pwd(void);
-int		ft_command_cd(t_environment 	*env, const char	*arg);
-int		ft_command_pwd(t_environment	*env, const char	*arg);
-int		ft_command_env(t_environment	*env, const char	*arg);
-int		ft_command_unset(t_environment	*env, const char	*arg);
+int		ft_command_cd(t_environment *env, const char	*arg);
+int		ft_command_pwd(t_environment *env, const char	*arg);
+int		ft_command_env(t_environment *env, const char	*arg);
+int		ft_command_unset(t_environment *env, const char	*arg);
 
 //		commands_2.c
-int		ft_command_exit(t_environment 	*env, const char	*arg);
+int		ft_command_exit(t_environment *env, const char	*arg);
 int		ft_command_export(t_environment	*env, const char	*arg);
 
 //		utilities_readline.c
@@ -155,15 +154,19 @@ void	here_doc(t_redir *token, int pipe_fd[2]);
 int		preparse(t_environment *env);
 void	lexer(t_environment *env);
 
+//		parser_utilities.c
+void	expand_word(t_environment *env, char **start, int *size);
+
 //		parser.c
 void	parser(t_environment *env);
+
+//		executor_utilities.c
+void	find_cmd_in_path(char **args, char **envp);
 
 //		executor.c
 int		executor(t_environment *env);
 
 //		main.c
-int		main(int argc, char **argv, char    **envp);
-
-void	rl_replace_line (const char *, int);
+int		main(int argc, char **argv, char **envp);
 
 #endif

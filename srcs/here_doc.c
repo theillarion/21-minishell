@@ -13,10 +13,14 @@ void	finalize_heredoc(const int *pipe_fd, char *str, char *delimit, int stat)
 void	here_doc(t_redir *token, int pipe_fd[2])
 {
 	char	*str;
+	char	*token_delimiter;
 	char	*delimit;
 
-	// ToDo fix leak
-	delimit = ft_strjoin(ft_substr(token->arg->start, 0, token->arg->size), "\n");
+	token_delimiter = ft_substr(token->arg->start, 0, token->arg->size);
+	if (!token_delimiter)
+		ft_raise_error("malloc delimiter error\n");
+	delimit = ft_strjoin(token_delimiter, "\n");
+	free(token_delimiter);
 	if (!delimit)
 		ft_raise_error("malloc delimiter error\n");
 	ft_putstr_fd("> ", 1);
