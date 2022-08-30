@@ -27,7 +27,6 @@ int main(int argc, char **argv, char    **envp)
 		printf("Error!\n");
 	}
 	ft_get_line(&env);
-//	ft_command_env(&env);
 	while (env.input_line)
 	{
 		if (preparse(&env))

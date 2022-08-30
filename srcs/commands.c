@@ -30,8 +30,9 @@ char	*ft_get_pwd()
 	return (path);
 }
 
-int	ft_command_pwd(t_environment	*env)
+int	ft_command_pwd(t_environment	*env, const char	*arg)
 {
+	(void) arg;
 	if (env == NULL || env->info.pwd == NULL)
 	{
 		ft_error(env->info.name_shell, "pwd");
@@ -44,11 +45,12 @@ int	ft_command_pwd(t_environment	*env)
 	}
 }
 
-int	ft_command_env(const t_environment	*env)
+int	ft_command_env(t_environment	*env, const char	*arg)
 {
 	t_variable_env	var_env;
 	size_t	i;
 
+	(void) arg;
 	if (env == NULL || ft_size(&env->variables_env) == 0)
 		return (COMMON_ERROR);
 	i = 0;

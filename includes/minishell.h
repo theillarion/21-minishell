@@ -47,11 +47,10 @@ enum e_status
 enum e_Token
 {
 	t_word,
-	t_word_exp,
 	t_pipe,
-	t_r_out,
 	t_r_in,
 	t_hd,
+	t_r_out,
 	t_r_outa
 };
 
@@ -68,13 +67,6 @@ typedef struct s_redir
 	t_token *arg;
 }	t_redir;
 
-typedef struct s_command
-{
-	t_token *command;
-	t_vector args;
-	t_vector redirs;
-}	t_command;
-
 typedef	struct s_environment
 {
 	t_prompt	prompt;
@@ -85,7 +77,16 @@ typedef	struct s_environment
 	int			last_code;
 	t_vector 	tokens;
 	t_vector 	groups;
+	t_vector	builtins;
 }				t_environment;
+
+typedef struct s_command
+{
+	t_token		*command;
+	t_vector	args;
+	t_vector	redirs;
+	int (*builtin)(t_environment *, char *args);
+}				t_command;
 
 void	ft_push(t_vector	*vector, const char	*string_var);
 size_t	ft_find_by_name(const t_vector	*vector, const char	*name);
@@ -102,8 +103,8 @@ void	ft_error(const char	*name_shell, const char	*err_msg);
 //		commands.c
 char	*ft_get_pwd(void);
 int		ft_command_cd(t_environment 	*env, const char	*arg);
-int		ft_command_pwd(t_environment	*env);
-int		ft_command_env(const t_environment	*env);
+int		ft_command_pwd(t_environment	*env, const char	*arg);
+int		ft_command_env(t_environment	*env, const char	*arg);
 int		ft_command_unset(t_environment	*env, const char	*arg);
 
 //		commands_2.c
@@ -136,12 +137,12 @@ void	input_file_fd(t_redir *token);
 void	output_file_fd(t_redir *token);
 
 //		ft_isspace.c
-int	ft_isspace(int c);
+int		ft_isspace(int c);
 
 //		ft_errors_managment.c
 void	cmd_not_found(char *const *in_argv);
-int	ft_raise_error(char *strarg);
-int	ft_raise_perror(char *strarg, int free_arg);
+int		ft_raise_error(char *strarg);
+int		ft_raise_perror(char *strarg, int free_arg);
 void	exit_find_failure(char **in_argv, char *access_denied_path);
 
 //		get_next_line.c
@@ -151,14 +152,18 @@ char	*get_next_line(int fd);
 void	here_doc(t_redir *token, int pipe_fd[2]);
 
 //		lexer.c
-int preparse(t_environment *env);
-void lexer(t_environment *env);
-void parser(t_environment *env);
-int executor(t_environment *env);
+int		preparse(t_environment *env);
+void	lexer(t_environment *env);
+
+//		parser.c
+void	parser(t_environment *env);
+
+//		executor.c
+int		executor(t_environment *env);
 
 //		main.c
 int		main(int argc, char **argv, char    **envp);
 
-void rl_replace_line (const char *, int);
+void	rl_replace_line (const char *, int);
 
 #endif
