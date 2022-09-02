@@ -42,5 +42,7 @@ int	ft_command_export(t_environment	*env, const char	*arg)
 
 int	ft_command_echo(t_environment	*env, const char	*arg)
 {
-	// SOON...
+	(void)env;
+	(void)arg;
+	return (0);
 }

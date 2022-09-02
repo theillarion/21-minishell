@@ -1,6 +1,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -83,19 +84,19 @@ typedef struct s_environment
 	t_vector	groups;
 }				t_environment;
 
-typedef struct s_command
-{
-	t_token		*command;
-	t_vector	args;
-	t_vector	redirs;
-	int			(*builtin)(t_environment *, const char *args);
-}				t_command;
-
 typedef struct s_function
 {
 	char	*name;
 	int		(*func)(t_environment *, const char *);
 }		t_function;
+
+typedef struct s_command
+{
+	t_token		*command;
+	t_vector	args;
+	t_vector	redirs;
+	t_function	*builtin;
+}				t_command;
 
 void	ft_push(t_vector	*vector, const char	*string_var);
 size_t	ft_find_by_name(const t_vector	*vector, const char	*name);

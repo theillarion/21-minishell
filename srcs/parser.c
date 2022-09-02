@@ -40,6 +40,12 @@ void	get_command(t_environment *env, size_t *i)
 			{
 				com_added = 1;
 				cmd.command = cur_token;
+				// find builtin
+				size_t	index;
+
+				index = ft_find_by_name(&env->functions, ft_substr(cur_token->start, 0, cur_token->size));
+				if (index != SIZE_MAX)
+					cmd.builtin = ((t_function *)ft_get_element(&env->functions, index));
 			}
 			ft_push_back(&cmd.args, (void *)cur_token);
 		}

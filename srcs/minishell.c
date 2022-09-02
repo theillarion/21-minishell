@@ -35,8 +35,8 @@ void	ft_main_handle(t_environment	*env)
 			{
 				if (waitpid(pid, &status, 0) == -1)
 					ft_raise_error("waitpid error\n");
-//				if (WIFEXITED(status))
-//					exit(WEXITSTATUS(status));
+				if (WIFEXITED(status))
+					exit(WEXITSTATUS(status));
 			}
 		}
 	}

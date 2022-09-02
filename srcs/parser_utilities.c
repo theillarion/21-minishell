@@ -48,7 +48,7 @@ char	*str_expanding(char *current_string, int *i, t_environment *env)
 	char			*firstpart;
 	char			*var_name;
 	size_t			var_index;
-	char			*var_value;
+	char			**var_value;
 	char			*lastpart;
 	t_variable_env	*var_element;
 
@@ -62,14 +62,11 @@ char	*str_expanding(char *current_string, int *i, t_environment *env)
 	var_name = ft_substr(current_string, beginning + 1, *i - beginning - 1);
 	var_index = ft_find_by_name(&env->variables_env, var_name);
 	var_element = ft_get_element(&env->variables_env, var_index);
-	if (var_element)
-		var_value = var_element->value;
-	else
-		var_value = ft_strdup("");
+	var_value = var_element->values;
 	lastpart = ft_strdup(current_string + *i);
-	if (ft_strlen(var_name) > ft_strlen(var_value))
-		*i = *i - (int)(ft_strlen(var_name) - ft_strlen(var_value));
-	result = ft_strjoin(firstpart, var_value);
+	if (ft_strlen(var_name) > ft_strlen(*var_value))
+		*i = *i - (int)(ft_strlen(var_name) - ft_strlen(*var_value));
+	result = ft_strjoin(firstpart, *var_value);
 	result = ft_strjoin(result, lastpart);
 	return (result);
 }

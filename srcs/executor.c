@@ -6,14 +6,20 @@ void	ft_exec_command(t_environment *env, t_command *cmd)
 	char	**envp;
 	char	**args;
 
+
 	command = ft_substr(cmd->command->start, 0, cmd->command->size);
 	if (ft_strlen(command) == 0)
 		exit(0);
 	ft_convert_vector_to_array(&envp, &env->variables_env);
 	ft_convert_token_vector_to_str_array(&args, &cmd->args);
-	if (ft_strchr(command, '/') != NULL)
-		execve(command, args, envp);
-	find_cmd_in_path(args, envp);
+	if (cmd->builtin)
+		cmd->builtin->func(env, *(++args));
+	else
+	{
+		if (ft_strchr(command, '/') != NULL)
+			execve(command, args, envp);
+		find_cmd_in_path(args, envp);
+	}
 }
 
 void	child_process(t_environment *env, size_t i, int pipe_fd[2][2])
@@ -52,7 +58,16 @@ int	executor(t_environment *env)
 	size_t	current;
 	pid_t	pid;
 	int		pipe_fd[2][2];
+	t_command	*cur_cmd;
 
+	current = 0;
+	if (ft_size(&env->groups) == 1)
+	{
+		cur_cmd = (t_command *) ft_get_element(&env->groups, current);
+		pipe(pipe_fd[current % 2]);
+		if (cur_cmd->builtin)
+			child_process(env, current, pipe_fd);
+	}
 	current = -1;
 	while (++current < ft_size(&env->groups))
 	{
