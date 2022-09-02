@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	ft_exec_command(t_environment *env, t_command *cmd)
+void	ft_exec_command(t_environment *env, t_command *cmd, int is_child)
 {
 	char	*command;
 	char	**envp;
@@ -12,7 +12,11 @@ void	ft_exec_command(t_environment *env, t_command *cmd)
 	ft_convert_vector_to_array(&envp, &env->variables_env);
 	ft_convert_token_vector_to_str_array(&args, &cmd->args);
 	if (cmd->builtin)
-		exit(cmd->builtin->func(env, *(++args)));
+	{
+		if (is_child)
+			exit(cmd->builtin->func(env, *(++args)));
+		cmd->builtin->func(env, *(++args));
+	}
 	else
 	{
 		if (ft_strchr(command, '/') != NULL)
@@ -21,7 +25,7 @@ void	ft_exec_command(t_environment *env, t_command *cmd)
 	}
 }
 
-void	child_process(t_environment *env, size_t i, int pipe_fd[2][2])
+void	process_prepare(t_environment *env, size_t i, int pipe_fd[2][2], int is_child)
 {
 	t_command	*cur_cmd;
 	size_t		r;
@@ -32,12 +36,12 @@ void	child_process(t_environment *env, size_t i, int pipe_fd[2][2])
 	if (i != 0)
 	{
 		if (dup2(pipe_fd[!(i % 2)][0], 0) == -1)
-			ft_raise_error("dup2 error 0\n");
+			ft_raise_error("dup2 error\n");
 	}
 	if ((i + 1 != ft_size(&env->groups)))
 	{
 		if (dup2(pipe_fd[i % 2][1], 1) == -1)
-			ft_raise_error("dup2 error 1\n");
+			ft_raise_error("dup2 error\n");
 	}
 	while (++r < ft_size(&cur_cmd->redirs))
 	{
@@ -49,7 +53,7 @@ void	child_process(t_environment *env, size_t i, int pipe_fd[2][2])
 		if (cur_redir->r_type == t_r_out || cur_redir->r_type == t_r_outa)
 			output_file_fd(cur_redir);
 	}
-	ft_exec_command(env, cur_cmd);
+	ft_exec_command(env, cur_cmd, is_child);
 }
 
 int	executor(t_environment *env)
@@ -59,27 +63,29 @@ int	executor(t_environment *env)
 	int		pipe_fd[2][2];
 	t_command	*cur_cmd;
 
+	pid = 0;
 	current = 0;
-	if (ft_size(&env->groups) == 1)
+	cur_cmd = (t_command *) ft_get_element(&env->groups, current);
+	if (ft_size(&env->groups) == 1 && cur_cmd->builtin)
 	{
-		cur_cmd = (t_command *) ft_get_element(&env->groups, current);
 		pipe(pipe_fd[current % 2]);
-		if (cur_cmd->builtin)
-			child_process(env, current, pipe_fd);
+		process_prepare(env, current, pipe_fd, 0);
 	}
-	current = -1;
-	while (++current < ft_size(&env->groups))
+	else
 	{
-		pipe(pipe_fd[current % 2]);
-		pid = fork();
-		if (pid == -1)
-			ft_raise_error("fork error\n");
-		else if (pid == 0)
-			child_process(env, current, pipe_fd);
-		else
-		{
-			if (close(pipe_fd[current % 2][1]) == -1)
-				ft_raise_error("close fd error\n");
+		current = -1;
+
+		while (++current < ft_size(&env->groups)) {
+			pipe(pipe_fd[current % 2]);
+			pid = fork();
+			if (pid == -1)
+				ft_raise_error("fork error\n");
+			else if (pid == 0)
+				process_prepare(env, current, pipe_fd, 1);
+			else {
+				if (close(pipe_fd[current % 2][1]) == -1)
+					ft_raise_error("close fd error\n");
+			}
 		}
 	}
 	return (pid);

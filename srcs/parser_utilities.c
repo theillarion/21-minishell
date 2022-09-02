@@ -62,6 +62,7 @@ char	*str_expanding(char *current_string, int *i, t_environment *env)
 	var_name = ft_substr(current_string, beginning + 1, *i - beginning - 1);
 	var_index = ft_find_by_name(&env->variables_env, var_name);
 	var_element = ft_get_element(&env->variables_env, var_index);
+	// ToDo fix segfault after merge with illarion's branch
 	var_value = var_element->values;
 	lastpart = ft_strdup(current_string + *i);
 	if (ft_strlen(var_name) > ft_strlen(*var_value))

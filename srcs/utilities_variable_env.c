@@ -62,8 +62,7 @@ static char	*ft_get_str(const t_variable_env	*var_env)
 		length = ft_strlen(*ptr);
 		memcpy(result + i, *ptr, sizeof(**ptr) * length);
 		i += length;
-		if (!*(ptr + 1))
-			result[i++] = ':';
+		result[i++] = ':';
 		++ptr;
 	}
 	result[i] = '\0';
