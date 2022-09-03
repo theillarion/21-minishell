@@ -108,9 +108,4 @@ norm		:
 				@printf "$(COLOR_LCYAN)norminette$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
-pd			:
-				@$(MAKE) debug -s -C $(LIB_PATH)
-				@$(MAKE) debug -s -C $(LIB_V_PATH)
-				clang -Wall -Wextra -Werror srcs/lexer.c srcs/ft_token.c srcs/ft_token_utils.c srcs/ft_isspace.c -L./lib/libft -lft -L./lib/libvector -lvector -lreadline -g -Iincludes
-
 print-%  	: ; @echo $* = $($*)
