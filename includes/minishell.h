@@ -169,6 +169,10 @@ void	here_doc(t_redir *token, int pipe_fd[2]);
 int		preparse(t_environment *env);
 void	lexer(t_environment *env);
 
+//		parser_utilities_vars.c
+char	*ft_strjoin_with_free(char *str1, char *str2, int free_1, int free_2);
+char	*get_v(const char *string, int *i, const t_environment *env, int beg);
+
 //		parser_utilities.c
 void	expand_word(t_environment *env, char **start, int *size);
 

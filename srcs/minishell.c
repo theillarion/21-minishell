@@ -37,6 +37,7 @@ void	ft_main_handle(t_environment	*env)
 					ft_raise_error("waitpid error\n");
 //				if (WIFEXITED(status))
 //					exit(WEXITSTATUS(status));
+
 			}
 		}
 	}

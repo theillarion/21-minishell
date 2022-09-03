@@ -13,6 +13,37 @@ int	preparse(t_environment *env)
 	return (1);
 }
 
+void	double_sized_token(char **input, char *res, t_token *ttoken, char type)
+{
+	(*res) = type;
+	(*ttoken).size = 2;
+	*input = *input + 1;
+}
+
+void	parse_token(char **input, t_token *ttoken)
+{
+	if (**input == '>')
+	{
+		if (*(*input + 1) == '>')
+			double_sized_token(input, *input, ttoken, '+');
+	}
+	else if (**input == '<')
+	{
+		if (*(*input + 1) == '<')
+			double_sized_token(input, *input, ttoken, 'h');
+	}
+	if ((**input) == '<')
+		(*ttoken).type = t_r_in;
+	if ((**input) == '>')
+		(*ttoken).type = t_r_out;
+	if ((**input) == '+')
+		(*ttoken).type = t_r_outa;
+	if ((**input) == 'h')
+		(*ttoken).type = t_hd;
+	if ((**input) == '|')
+		(*ttoken).type = t_pipe;
+}
+
 int	get_token(char **input, t_vector *tokens)
 {
 	int		res;
@@ -22,54 +53,24 @@ int	get_token(char **input, t_vector *tokens)
 		*input = *input + 1;
 	if (!(**input))
 		return (0);
-	res = (unsigned char)**input;
-	if (ft_strchr("<>|", res))
+	ttoken.start = *input;
+	ttoken.size = 1;
+	if (ft_strchr("<>|", **input))
 	{
-		ttoken.start = *input;
-		ttoken.size = 1;
-		if (**input == '>')
-		{
-			if (*(*input + 1) == '>')
-			{
-				res = '+';
-				ttoken.size = 2;
-				*input = *input + 1;
-			}
-		}
-		else if (**input == '<')
-		{
-			if (*(*input + 1) == '<')
-			{
-				res = 'h';
-				ttoken.size = 2;
-				*input = *input + 1;
-			}
-		}
-		if (res == '<')
-			ttoken.type = t_r_in;
-		if (res == '>')
-			ttoken.type = t_r_out;
-		if (res == '+')
-			ttoken.type = t_r_outa;
-		if (res == 'h')
-			ttoken.type = t_hd;
-		if (res == '|')
-			ttoken.type = t_pipe;
-		ft_push_back(tokens, &ttoken);
+		parse_token(input, &ttoken);
 		*input = *input + 1;
 	}
 	else
 	{
 		res = 'w';
-		ttoken.start = *input;
 		ttoken.type = t_word;
 		while (**input && !(ft_strchr("<>|", **input)) && !ft_isspace(**input))
 			*input = *input + 1;
 		ttoken.size = (int)(*input - ttoken.start);
-		if (ttoken.size)
-			ft_push_back(tokens, (void *)&ttoken);
 	}
-	return (res);
+	if (ttoken.size)
+		ft_push_back(tokens, &ttoken);
+	return (**input);
 }
 
 void	lexer(t_environment *env)

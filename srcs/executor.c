@@ -25,14 +25,29 @@ void	ft_exec_command(t_environment *env, t_command *cmd, int is_child)
 	}
 }
 
-void	process_prepare(t_environment *env, size_t i, int pipe_fd[2][2], int is_child)
+void	serve_redirects(size_t i, int pipe_fd[2][2], t_command *cmd)
+{
+	t_redir		*redir;
+	size_t		r;
+
+	r = -1;
+	while (++r < ft_size(&cmd->redirs))
+	{
+		redir = (t_redir *)ft_get_element(&cmd->redirs, r);
+		if (redir->r_type == t_r_in)
+			input_file_fd(redir);
+		if (redir->r_type == t_hd)
+			here_doc(redir, pipe_fd[i % 2]);
+		if (redir->r_type == t_r_out || redir->r_type == t_r_outa)
+			output_file_fd(redir);
+	}
+}
+
+void	proc_prep(t_environment *env, size_t i, int pipe_fd[2][2], int is_chld)
 {
 	t_command	*cur_cmd;
-	size_t		r;
-	t_redir		*cur_redir;
 
 	cur_cmd = (t_command *) ft_get_element(&env->groups, i);
-	r = -1;
 	if (i != 0)
 	{
 		if (dup2(pipe_fd[!(i % 2)][0], 0) == -1)
@@ -43,50 +58,46 @@ void	process_prepare(t_environment *env, size_t i, int pipe_fd[2][2], int is_chi
 		if (dup2(pipe_fd[i % 2][1], 1) == -1)
 			ft_raise_error("dup2 error\n");
 	}
-	while (++r < ft_size(&cur_cmd->redirs))
+	serve_redirects(i, pipe_fd, cur_cmd);
+	ft_exec_command(env, cur_cmd, is_chld);
+}
+
+pid_t	go_throw_groups(t_environment *env, pid_t pid, int pipe_fd[2][2])
+{
+	size_t		current;
+
+	current = -1;
+	while (++current < ft_size(&env->groups))
 	{
-		cur_redir = (t_redir *)ft_get_element(&cur_cmd->redirs, r);
-		if (cur_redir->r_type == t_r_in)
-			input_file_fd(cur_redir);
-		if (cur_redir->r_type == t_hd)
-			here_doc(cur_redir, pipe_fd[i % 2]);
-		if (cur_redir->r_type == t_r_out || cur_redir->r_type == t_r_outa)
-			output_file_fd(cur_redir);
+		pipe(pipe_fd[current % 2]);
+		pid = fork();
+		if (pid == -1)
+			ft_raise_error("fork error\n");
+		else if (pid == 0)
+			proc_prep(env, current, pipe_fd, 1);
+		else
+		{
+			if (close(pipe_fd[current % 2][1]) == -1)
+				ft_raise_error("close fd error\n");
+		}
 	}
-	ft_exec_command(env, cur_cmd, is_child);
+	return (pid);
 }
 
 int	executor(t_environment *env)
 {
-	size_t	current;
-	pid_t	pid;
-	int		pipe_fd[2][2];
+	pid_t		pid;
+	int			pipe_fd[2][2];
 	t_command	*cur_cmd;
 
 	pid = 0;
-	current = 0;
-	cur_cmd = (t_command *) ft_get_element(&env->groups, current);
+	cur_cmd = (t_command *) ft_get_element(&env->groups, 0);
 	if (ft_size(&env->groups) == 1 && cur_cmd->builtin)
 	{
-		pipe(pipe_fd[current % 2]);
-		process_prepare(env, current, pipe_fd, 0);
+		pipe(pipe_fd[0]);
+		proc_prep(env, 0, pipe_fd, 0);
 	}
 	else
-	{
-		current = -1;
-
-		while (++current < ft_size(&env->groups)) {
-			pipe(pipe_fd[current % 2]);
-			pid = fork();
-			if (pid == -1)
-				ft_raise_error("fork error\n");
-			else if (pid == 0)
-				process_prepare(env, current, pipe_fd, 1);
-			else {
-				if (close(pipe_fd[current % 2][1]) == -1)
-					ft_raise_error("close fd error\n");
-			}
-		}
-	}
+		pid = go_throw_groups(env, pid, pipe_fd);
 	return (pid);
 }
