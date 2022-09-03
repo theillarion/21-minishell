@@ -1,82 +1,47 @@
 #include "minishell.h"
 
-extern char **environ;
+typedef const char *const * t_double_ptr;
 
-//		NOT WORK 
-void	ft_free_double_array(char	***strs)
+void	ft_execute_external(t_environment	*env, char **args)
 {
-	if (strs == NULL || *strs == NULL)
-		return;
-	while (**strs)
-		free(*((*strs)++));
-	free(*strs);
-	*strs = NULL;
-}
+	pid_t	pid;
+	int		status;
+	char	*program;
 
-[[maybe_unused]] static char *ft_get_directory(const char *path, const char *name)
-{
-	char	*result;
-	char	*backup;
-
-	result = (char *)path;
-	backup = NULL;
-	if (path[ft_strlen(path) - 1] != '/')
+	pid = fork();
+	if (pid < 0)
+		ft_error(env->info.name_shell, *args);
+	else if (pid == 0)
 	{
-		result = ft_strjoin(path, "/");
-		backup = result;
+		if (ft_which((t_double_ptr)ft_get_by_name(&env->variables_env, "PATH")->values, *args, &program))
+			status = execve(program, args, env->envp);
+		else
+			status = execve(*args, args, env->envp);
+		ft_smart_free((void **)&program);
+		if (status < 0)
+			ft_error(env->info.name_shell, *args);
+		exit(status);
 	}
-	result = ft_strjoin(result, name);
-	ft_smart_free((void **)&backup);
-	return (result);
+	else
+	{
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status) != 0)
+			env->last_code = WEXITSTATUS(status);
+		else
+			ft_print_error(env, *args, "error");
+	}
 }
 
-void	ft_exucute_program(t_environment	*env, char **arg)
+void	ft_exucute_program(t_environment	*env, char **args)
 {
 	size_t index;
 
-	index = ft_find_by_name(&env->functions, *arg);
+	index = ft_find_by_name(&env->functions, *args);
 	if (index == SIZE_MAX)
-		printf("Function not found\n");
+		ft_execute_external(env, args);
 	else
-		(*(t_function *)ft_get_element(&env->functions, index)).func(env, *(++arg));
-	// pid_t	pid;
-	// int		status;
-
-	// pid = fork();
-	// if (pid < 0)
-	// {
-	// 	ft_error(env->info.name_shell, arg[0]);
-	// }
-	// else if (pid == 0)
-	// {
-	// 	bool is_find;
-	// 	char	**ptr;
-	// 	char	*program;
-
-	// 	ptr = (*(t_variable_env *)ft_get_element(&env->variables_env,
-	// 		ft_find_by_name(&env->variables_env, "PATH"))).values;
-	// 	is_find = false;
-	// 	while (ptr && *ptr && !is_find)
-	// 	{
-	// 		program = ft_get_directory(*ptr, *arg);
-	// 		if (ft_is_exist(program) && ft_is_regular_file(program))
-	// 			is_find = true;
-	// 		++ptr;
-	// 	}
-	// 	if (is_find)
-	// 		status = execve(program, arg, env->envp);
-	// 	else
-	// 		status = execve(*arg, arg, env->envp);
-	// 	if (status < 0)
-	// 		ft_error(env->info.name_shell, arg[0]);
-	// 	exit(status);
-	// }
-	// else
-	// {
-	// 	waitpid(pid, &status, 0);
-	// 	if (WIFEXITED(status) != 0)
-	// 		env->last_code = WEXITSTATUS(status);
-	// }
+		(*(t_function *)ft_get_element(&env->functions, index)).func(env, (const char *const *)++args);
+	
 }
 
 void	ft_main_handle(t_environment	*env)
