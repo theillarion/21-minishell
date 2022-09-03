@@ -29,3 +29,9 @@ size_t	ft_find_by_name(const t_vector	*vector, const char	*name)
 	}
 	return (SIZE_MAX);
 }
+
+t_variable_env *ft_get_by_name(const t_vector	*vector, const char *name)
+{
+	return ((t_variable_env *)ft_get_element(vector,
+			ft_find_by_name(vector, name)));
+}
