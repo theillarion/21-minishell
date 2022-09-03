@@ -18,7 +18,7 @@ static void	ft_fill_variables_env(t_vector	*vector, char	**envp)
 	}
 }
 
-static void ft_push_function(t_vector *src, char *name, int (*func)(t_environment *, const char *))
+static void ft_push_function(t_vector *src, char *name, int (*func)(t_environment *, const char *const *))
 {
 	t_function result;
 
