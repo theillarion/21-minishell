@@ -56,5 +56,5 @@ void	ft_init(t_environment	*env, char	**envp,
 	env->prompt.is_need_change = false;
 	env->input_line = NULL;
 	env->last_code = 0;
-	ft_set_new_prompt(&env->prompt, env->info);
+	ft_set_new_prompt(&env->variables_env, &env->prompt, env->info);
 }
