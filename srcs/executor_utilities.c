@@ -65,8 +65,8 @@ void	find_cmd_in_path(char **args, char **envp)
 	{
 		ft_full_path(args, paths, &path, &full_path);
 		execve(full_path, args, envp);
-		if (errno == EACCES)
-			access_denied_path = ft_strdup(full_path);
+//		if (errno == EACCES)
+//			access_denied_path = ft_strdup(full_path);
 		free(full_path);
 		free(path);
 		paths++;

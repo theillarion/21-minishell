@@ -51,6 +51,12 @@ char	*str_expanding(char *current_string, int *i, t_environment *env)
 	firstpart = ft_substr(current_string, 0, beginning);
 	lastpart = ft_strdup(current_string + *i);
 	var_value = get_v(current_string, i, env, beginning);
+	if (!var_value && !ft_strlen(firstpart) && !ft_strlen(lastpart))
+	{
+		free(firstpart);
+		free(lastpart);
+		return (NULL);
+	}
 	result = ft_strjoin_with_free(firstpart, var_value, 1, 1);
 	result = ft_strjoin_with_free(result, lastpart, 1, 1);
 	return (result);
@@ -90,7 +96,7 @@ void	expand_word(t_environment *env, char **start, int *size)
 
 	current_string = ft_substr(*start, 0, *size);
 	i = -1;
-	while (current_string[++i])
+	while (current_string && current_string[++i])
 	{
 		if (current_string[i] == '\'')
 			current_string = str_qoutes(current_string, &i);
@@ -102,5 +108,8 @@ void	expand_word(t_environment *env, char **start, int *size)
 			current_string = str_expanding(current_string, &i, env);
 	}
 	*start = current_string;
-	*size = (int)ft_strlen(current_string);
+	if (current_string)
+		*size = (int)ft_strlen(current_string);
+	else
+		*size = 0;
 }

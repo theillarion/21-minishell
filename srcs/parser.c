@@ -24,6 +24,8 @@ void	find_builtin(const t_environment *env, t_command *cmd, t_token *token)
 	char		*token_string;
 
 	(*cmd).builtin = NULL;
+	if (!token->size)
+		return ;
 	token_string = ft_substr(token->start, 0, token->size);
 	bi = ft_find_by_name(&env->functions, token_string);
 	if (bi != SIZE_MAX)

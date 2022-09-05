@@ -30,7 +30,7 @@ char	*get_v(const char *string, int *i, const t_environment *env, int beg)
 	var_name = ft_substr(string, beg + 1, *i - beg - 1);
 	var_index = ft_find_by_name(&env->variables_env, var_name);
 	var_element = ft_get_element(&env->variables_env, var_index);
-	var_value = ft_strdup("");
+	var_value = NULL;
 	if (var_element && var_element->values)
 	{
 		ptr = var_element->values;
@@ -42,7 +42,7 @@ char	*get_v(const char *string, int *i, const t_environment *env, int beg)
 			ptr++;
 		}
 	}
-	if (ft_strlen(var_name) > ft_strlen(var_value))
+	if (var_value && ft_strlen(var_name) > ft_strlen(var_value))
 		*i = *i - (int)(ft_strlen(var_name) - ft_strlen(var_value));
 	free(var_name);
 	return (var_value);

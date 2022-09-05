@@ -7,8 +7,6 @@ void	ft_exec_command(t_environment *env, t_command *cmd, int is_child)
 	char	**args;
 
 	command = ft_substr(cmd->command->start, 0, cmd->command->size);
-	if (ft_strlen(command) == 0)
-		exit(0);
 	ft_convert_vector_to_array(&envp, &env->variables_env);
 	ft_convert_token_vector_to_str_array(&args, &cmd->args);
 	if (cmd->builtin)
