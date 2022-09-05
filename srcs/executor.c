@@ -70,7 +70,7 @@ pid_t	go_throw_groups(t_environment *env, pid_t pid, int pipe_fd[2][2])
 		pipe(pipe_fd[current % 2]);
 		pid = fork();
 		if (pid == -1)
-			ft_raise_error("fork error\n");
+			ft_error(env->info.name_shell, "fork error");
 		else if (pid == 0)
 			proc_prep(env, current, pipe_fd, 1);
 		else

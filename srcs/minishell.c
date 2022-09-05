@@ -1,16 +1,22 @@
 #include "../includes/minishell.h"
 
-extern char	**environ;
+typedef const char *const * t_double_ptr;
 
-//		NOT WORK 
-void	ft_free_double_array(char	***strs)
+void	execute(t_environment *env)
 {
-	if (strs == NULL || *strs == NULL)
-		return ;
-	while (**strs)
-		free(*((*strs)++));
-	free(*strs);
-	*strs = NULL;
+	int		status;
+	pid_t	pid;
+
+	pid = executor(env);
+	if (pid)
+	{
+		if (waitpid(pid, &status, 0) == -1)
+			ft_raise_error("waitpid error\n");
+		if (WIFEXITED(status) != 0)
+			env->last_code = WEXITSTATUS(status);
+		else
+			ft_print_error(env, "error", "error");
+	}
 }
 
 void	ft_main_handle(t_environment	*env)
@@ -27,18 +33,7 @@ void	ft_main_handle(t_environment	*env)
 			ft_init_vector(&env->tokens, sizeof(t_token));
 			lexer(env);
 			parser(env);
-
-			int		status;
-			pid_t	pid;
-			pid = executor(env);
-			if (pid)
-			{
-				if (waitpid(pid, &status, 0) == -1)
-					ft_raise_error("waitpid error\n");
-//				if (WIFEXITED(status))
-//					exit(WEXITSTATUS(status));
-
-			}
+			execute(env);
 		}
 	}
 	if (env->is_need_update_envp)

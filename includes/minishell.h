@@ -16,9 +16,13 @@
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <errno.h>
-# include <fcntl.h>
 
+# include <fcntl.h>
 # include "get_next_line.h"
+# include <linux/limits.h>
+# ifndef PATH_MAX
+#  define PATH_MAX 1024
+# endif
 
 typedef struct sigaction	t_sigaction;
 
@@ -87,7 +91,7 @@ typedef struct s_environment
 typedef struct s_function
 {
 	char	*name;
-	int		(*func)(t_environment *, const char *);
+	int		(*func)(t_environment *, const char *const*);
 }		t_function;
 
 typedef struct s_command
@@ -100,6 +104,7 @@ typedef struct s_command
 
 void	ft_push(t_vector	*vector, const char	*string_var);
 size_t	ft_find_by_name(const t_vector	*vector, const char	*name);
+t_variable_env *ft_get_by_name(const t_vector	*vector, const char *name);
 
 //		prompt.c
 void	ft_set_new_prompt(t_prompt	*prompt, t_info	info);
@@ -112,18 +117,20 @@ void	ft_init(t_environment	*env, char	**envp,
 //		error.c
 void	ft_error(const char	*name_shell, const char	*err_msg);
 
-//		commands.c
+//		commands_utilities.c
 char	*ft_get_pwd(void);
+void	ft_print_error(t_environment	*env, const char *command, const char *msg);
 
-int		ft_command_cd(t_environment 	*env, const char	*arg);
-int		ft_command_pwd(t_environment	*env, const char	*arg);
-int		ft_command_env(t_environment	*env, const char	*arg);
-int		ft_command_unset(t_environment	*env, const char	*arg);
+//		commands.c
+int		ft_command_cd(t_environment 	*env, const char *const *args);
+int		ft_command_pwd(t_environment	*env, const char *const *args);
+int		ft_command_env(t_environment	*env, const char *const *args);
+int		ft_command_unset(t_environment	*env, const char *const *args);
 
 //		commands_2.c
-int		ft_command_exit(t_environment *env, const char	*arg);
-int		ft_command_export(t_environment	*env, const char	*arg);
-int		ft_command_echo(t_environment	*env, const char	*arg);
+int		ft_command_exit(t_environment 	*env, const char *const *args);
+int		ft_command_export(t_environment	*env, const char *const *args);
+int		ft_command_echo(t_environment	*env, const char *const *args);
 
 //		utilities_readline.c
 void	ft_readline_insert(const char	*str);
@@ -188,6 +195,7 @@ int		executor(t_environment *env);
 //		file_utilities.c
 bool	ft_is_regular_file(char const *path);
 bool	ft_is_exist(char const *path);
+bool	ft_which(const char *const *paths, const char *name, char **dst);
 
 //		main.c
 int		main(int argc, char **argv, char **envp);

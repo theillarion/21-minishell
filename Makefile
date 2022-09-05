@@ -24,11 +24,11 @@ LIB_V_D			=	$(LIB_V_PATH)/$(LIB_V_NAME_D)
 LINK_LIB	=	-lreadline -l$(LIB_NAME_S) -L$(LIB_PATH) -l$(LIB_V_NAME_S) -L$(LIB_V_PATH)
 LINK_LIB_D	=	-lreadline -l$(LIB_NAME_S_D) -L$(LIB_PATH) -l$(LIB_V_NAME_S_D) -L$(LIB_V_PATH)
 
-SRCS		=	$(addprefix srcs/,\
-				signal.c prompt.c utilities.c utilities_vector.c utilities_readline.c commands.c commands_2.c \
+SRCS		=	$(addprefix srcs/, \
+				signal.c prompt.c commands_utilities.c utilities.c utilities_vector.c utilities_readline.c commands.c commands_2.c \
 				exit.c deinit.c utilities_variable_env.c init.c error.c file_utilities.c minishell.c \
 				lexer.c lexer_utilities.c in_out_files.c ft_errors_managment.c here_doc.c get_next_line.c \
-				parser.c parser_utilities.c parser_utilities_vars.c executor.c executor_utilities.c )
+				parser.c parser_utilities.c parser_utilities_vars.c executor.c executor_utilities.c)
 
 HEADERS		=	includes/minishell.h
 

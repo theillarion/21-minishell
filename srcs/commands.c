@@ -1,8 +1,8 @@
 #include "minishell.h"
 
-int	ft_command_cd(t_environment *env, const char	*arg)
+int	ft_command_cd(t_environment	*env, const char *const *args)
 {
-	if (env == NULL || chdir(arg) == -1)
+	if (env == NULL || args == NULL || *args == NULL || chdir(*args) == -1)
 	{
 		ft_error(env->info.name_shell, "cd");
 		return (COMMON_ERROR);
@@ -16,23 +16,9 @@ int	ft_command_cd(t_environment *env, const char	*arg)
 	}
 }
 
-char	*ft_get_pwd(void)
+int	ft_command_pwd(t_environment	*env, const char *const *args)
 {
-	char	*path;
-
-	path = (char *)malloc(101 * sizeof(*path));
-	ft_memset(path, 0, 101);
-	if (getcwd(path, 100) == NULL)
-	{
-		free(path);
-		return (NULL);
-	}
-	return (path);
-}
-
-int	ft_command_pwd(t_environment	*env, const char	*arg)
-{
-	(void)arg;
+	(void)args;
 	if (env == NULL || env->info.pwd == NULL)
 	{
 		ft_error(env->info.name_shell, "pwd");
@@ -45,43 +31,34 @@ int	ft_command_pwd(t_environment	*env, const char	*arg)
 	}
 }
 
-int	ft_command_env(t_environment	*env, const char	*arg)
+int	ft_command_env(t_environment	*env, const char *const *args)
 {
-	t_variable_env	var_env;
-	size_t			i;
-
-	(void)arg;
-	if (env == NULL || ft_size(&env->variables_env) == 0)
+	(void)args;
+	if (env == NULL)
 		return (COMMON_ERROR);
-	i = 0;
-	while (i < ft_size((const t_vector *)&env->variables_env))
+	while (env->envp && *env->envp)
 	{
-		var_env = *(t_variable_env *)ft_get_element(&env->variables_env, i);
-		ft_putstr_fd(var_env.name, STDOUT_FILENO);
-		ft_putchar_fd('=', STDOUT_FILENO);
-		while (*var_env.values)
-		{
-			ft_putstr_fd(*(var_env.values++), STDOUT_FILENO);
-			if (!*var_env.values)
-				ft_putchar_fd(':', STDOUT_FILENO);
-		}
-		ft_putchar_fd('\n', STDOUT_FILENO);
-		++i;
+		ft_putendl_fd(*env->envp, STDOUT_FILENO);
+		++env->envp;
 	}
 	return (SUCCESS);
 }
 
-int	ft_command_unset(t_environment	*env, const char	*arg)
+int	ft_command_unset(t_environment	*env, const char *const *args)
 {
 	size_t	index;
 
-	if (env == NULL || arg == NULL)
+	if (env == NULL || args == NULL)
 		return (SUCCESS);
-	index = ft_find_by_name(&env->variables_env, arg);
-	if (index < ft_size((const t_vector *)&env->variables_env))
+	while (*args)
 	{
-		ft_erase(&env->variables_env, index);
-		env->is_need_update_envp = true;
+		index = ft_find_by_name(&env->variables_env, *args);
+		if (index < ft_size((const t_vector *)&env->variables_env))
+		{
+			ft_erase(&env->variables_env, index);
+			env->is_need_update_envp = true;
+		}
+		++args;
 	}
 	return (SUCCESS);
 }
