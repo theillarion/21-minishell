@@ -12,8 +12,8 @@ void	ft_exec_command(t_environment *env, t_command *cmd, int is_child)
 	if (cmd->builtin)
 	{
 		if (is_child)
-			exit(cmd->builtin->func(env, *(++args)));
-		cmd->builtin->func(env, *(++args));
+			exit(cmd->builtin->func(env, (const char *const *)*(++args)));
+		cmd->builtin->func(env, (const char *const *)*(++args));
 	}
 	else
 	{
