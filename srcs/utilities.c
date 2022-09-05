@@ -1,11 +1,26 @@
 #include "minishell.h"
 
+void ft_foreach(void **array, void (*func)(void *))
+{
+	while (array && *array)
+		func(*(array++));
+}
+
 void	ft_smart_free(void	**address)
 {
 	if (address == NULL || *address == NULL)
 		return;
 	free(*address);
 	*address = NULL;
+}
+
+void	ft_smart_double_free(void	***address)
+{
+	if (address && *address)
+	{
+		ft_foreach(*address, free);
+		ft_smart_free((void **)address);
+	}
 }
 
 int	ft_smart_atoi(const char	*src, bool	*is_error)
