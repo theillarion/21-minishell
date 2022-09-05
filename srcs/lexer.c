@@ -46,7 +46,6 @@ void	parse_token(char **input, t_token *ttoken)
 
 int	get_token(char **input, t_vector *tokens)
 {
-	int		res;
 	t_token	ttoken;
 
 	while (**input && ft_isspace(**input))
@@ -62,7 +61,6 @@ int	get_token(char **input, t_vector *tokens)
 	}
 	else
 	{
-		res = 'w';
 		ttoken.type = t_word;
 		while (**input && !(ft_strchr("<>|", **input)) && !ft_isspace(**input))
 			*input = *input + 1;
