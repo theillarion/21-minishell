@@ -2,8 +2,8 @@
 
 void	input_file_fd(t_redir *token)
 {
-	char *path;
-	int read_fd;
+	char	*path;
+	int		read_fd;
 
 	path = ft_substr(token->arg->start, 0, token->arg->size);
 	read_fd = open(path, O_RDONLY);
@@ -17,9 +17,9 @@ void	input_file_fd(t_redir *token)
 
 void	output_file_fd(t_redir *token)
 {
-	char *path;
-	int	flags;
-	int write_fd;
+	char	*path;
+	int		flags;
+	int		write_fd;
 
 	path = ft_substr(token->arg->start, 0, token->arg->size);
 	flags = O_CREAT | O_RDWR;
