@@ -6,8 +6,8 @@ int	ft_command_exit(t_environment	*env, const char *const *args)
 	bool	is_error;
 
 	ft_putendl_fd("exit", STDOUT_FILENO);
-	if (env == NULL)
-		return (ft_exit(env, COMMON_ERROR, false));
+	if (env == NULL || args == NULL || *args == NULL)
+		return (ft_exit(env, SUCCESS, false));
 	if (args != NULL && *args != NULL && *(args + 1) != NULL)
 	{
 		ft_print_error(env, "exit", "too many arguments");

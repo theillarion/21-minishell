@@ -1,18 +1,5 @@
 #include "minishell.h"
 
-int	preparse(t_environment *env)
-{
-	char	*il;
-
-	// ToDo Write checks for bash syntax
-	il = env->input_line;
-	while (*il)
-	{
-		il++;
-	}
-	return (1);
-}
-
 void	double_sized_token(char **input, char *res, t_token *ttoken, char type)
 {
 	(*res) = type;

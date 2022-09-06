@@ -2,9 +2,19 @@
 
 int	ft_command_cd(t_environment	*env, const char *const *args)
 {
-	if (env == NULL || args == NULL || *args == NULL || chdir(*args) == -1)
+	char	*arg;
+
+	if (!env || !args)
+		return (SUCCESS);
+	arg = (char *)*args;
+	if (!arg || (*arg == '~' && *(arg + 1) == '\0'))
+		arg = *(ft_get_by_name(&env->variables_env, "HOME")->values);
+	if (ft_strlen(arg) == ft_strlen(env->info.pwd)
+		&& ft_strncmp(arg, env->info.pwd, ft_strlen(arg)) == 0)
+		return (SUCCESS);
+	if (chdir(arg) == -1)
 	{
-		ft_error(env->info.name_shell, "cd");
+		ft_print_errno(env, "chdir");
 		return (COMMON_ERROR);
 	}
 	else

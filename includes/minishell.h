@@ -107,7 +107,7 @@ size_t			ft_find_by_name(const t_vector	*vector, const char	*name);
 t_variable_env	*ft_get_by_name(const t_vector	*vector, const char *name);
 
 //		prompt.c
-void			ft_set_new_prompt(t_prompt	*prompt, t_info	info);
+void			ft_set_new_prompt(const t_vector *variable_env, t_prompt	*prompt, t_info	info);
 
 //		init.c
 
@@ -119,8 +119,6 @@ void			ft_error(const char	*name_shell, const char	*err_msg);
 
 //		commands_utilities.c
 char			*ft_get_pwd(void);
-void			ft_print_error(t_environment	*env, const char *command,
-					const char *msg);
 
 //		commands.c
 int				ft_command_cd(t_environment *env, const char *const *args);
@@ -137,7 +135,9 @@ int				ft_command_echo(t_environment	*env, const char *const *args);
 void			ft_readline_insert(const char	*str);
 
 //		utilities.c
+void			ft_foreach(void **array, void (*func)(void *));
 void			ft_smart_free(void	**address);
+void			ft_smart_double_free(void	***address);
 int				ft_smart_atoi(const char	*src, bool	*is_error);
 
 //		signal.c
@@ -175,7 +175,6 @@ char			*get_next_line(int fd);
 void			here_doc(t_redir *token, int pipe_fd[2]);
 
 //		lexer.c
-int				preparse(t_environment *env);
 void			lexer(t_environment *env);
 
 //		parser_utilities_vars.c
@@ -203,6 +202,10 @@ bool			ft_is_regular_file(char const *path);
 bool			ft_is_exist(char const *path);
 bool			ft_which(const char *const *paths, const char *name,
 					char **dst);
+
+//		print
+void			ft_print_error(t_environment *env, const char *command, const char *msg);
+void			ft_print_errno(t_environment *env, const char *command);
 
 //		main.c
 int				main(int argc, char **argv, char **envp);
