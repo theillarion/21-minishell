@@ -32,8 +32,8 @@ void	ft_main_handle(t_environment	*env)
 		{
 			ft_init_vector(&env->tokens, sizeof(t_token));
 			lexer(env);
-			parser(env);
-			execute(env);
+			if (parser(env) == 0)
+				execute(env);
 		}
 	}
 	if (env->is_need_update_envp)

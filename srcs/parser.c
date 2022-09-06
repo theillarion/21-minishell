@@ -47,19 +47,20 @@ void	process_word(t_environment *env, t_command *cmd, t_token *tkn, int *ca)
 	}
 }
 
-void	get_command(t_environment *env, size_t *i)
+int	get_command(t_environment *env, size_t *i)
 {
 	t_command	cmd;
 	t_token		*cur_token;
 	int			command_added;
 
 	ft_init_vector(&cmd.redirs, sizeof(t_redir));
-	ft_init_vector(&cmd.args, sizeof(t_vector));
+	ft_init_vector(&cmd.args, sizeof(t_token));
 	command_added = 0;
 	while (*i < ft_size(&env->tokens))
 	{
 		cur_token = (t_token *)ft_get_element(&env->tokens, *i);
-		expand_word(env, &cur_token->start, &cur_token->size);
+		if (expand_word(env, &cur_token->start, &cur_token->size))
+			return (1);
 		if (cur_token->type == t_pipe)
 			break ;
 		add_redirect(&cmd.redirs, cur_token, &env->tokens, i);
@@ -67,14 +68,25 @@ void	get_command(t_environment *env, size_t *i)
 		(*i)++;
 	}
 	ft_push_back(&env->groups, (void *)&cmd);
+	return (0);
 }
 
-void	parser(t_environment *env)
+int	parser(t_environment *env)
 {
 	size_t		i;
 
 	ft_init_vector(&env->groups, sizeof(t_command));
 	i = -1;
 	while (++i < ft_size(&env->tokens))
-		get_command(env, &i);
+	{
+		if (check_syntax_token(env, i))
+			return (1);
+	}
+	i = -1;
+	while (++i < ft_size(&env->tokens))
+	{
+		if (get_command(env, &i))
+			return (1);
+	}
+	return (0);
 }

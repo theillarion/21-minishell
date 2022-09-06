@@ -28,7 +28,7 @@ SRCS		=	$(addprefix srcs/, \
 				signal.c prompt.c commands_utilities.c utilities.c utilities_vector.c utilities_readline.c commands.c commands_2.c \
 				exit.c deinit.c utilities_variable_env.c init.c error.c file_utilities.c minishell.c \
 				lexer.c lexer_utilities.c in_out_files.c ft_errors_managment.c here_doc.c get_next_line.c \
-				parser.c parser_utilities.c parser_utilities_vars.c executor.c executor_utilities.c)
+				parser.c parser_utilities.c parser_utilities_vars.c parser_utilities_syntax.c executor.c executor_utilities.c )
 
 HEADERS		=	includes/minishell.h
 

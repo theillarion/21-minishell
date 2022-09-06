@@ -12,7 +12,7 @@ char	*str_slash(char *current_string, int *i)
 	return (result);
 }
 
-char	*str_qoutes(char *current_str, int *i)
+char	*str_qoutes(char *current_str, int *i, int *r)
 {
 	int		begin;
 	char	*firstpart;
@@ -21,10 +21,14 @@ char	*str_qoutes(char *current_str, int *i)
 	char	*result;
 
 	begin = *i;
+	*r = 1;
 	while (current_str[++*i])
 	{
 		if (current_str[*i] == '\'')
+		{
+			*r = 0;
 			break ;
+		}
 	}
 	firstpart = ft_substr(current_str, 0, begin);
 	in_qoutes_part = ft_substr(current_str, begin + 1, (*i - begin - 1));
@@ -62,7 +66,7 @@ char	*str_expanding(char *current_string, int *i, t_environment *env)
 	return (result);
 }
 
-char	*str_double_qoutes(char *current_str, int *i, t_environment *env)
+char	*str_double_qoutes(char *current_s, int *i, t_environment *env, int *r)
 {
 	int		begin;
 	char	*firstpart;
@@ -71,39 +75,53 @@ char	*str_double_qoutes(char *current_str, int *i, t_environment *env)
 	char	*result;
 
 	begin = *i;
-	while (current_str[++(*i)])
+	*r = 2;
+	while (current_s[++(*i)])
 	{
-		if (current_str[*i] == '\\' && (current_str[*i + 1] == '\\'
-				|| current_str[*i + 1] == '$' || current_str[*i + 1] == '\"'))
-			current_str = str_slash(current_str, i);
-		if (current_str[*i] == '$')
-			current_str = str_expanding(current_str, i, env);
-		if (current_str[*i] == '\"')
+		if (current_s[*i] == '\\' && (current_s[*i + 1] == '\\'
+				|| current_s[*i + 1] == '$' || current_s[*i + 1] == '\"'))
+			current_s = str_slash(current_s, i);
+		if (current_s[*i] == '$')
+			current_s = str_expanding(current_s, i, env);
+		if (current_s[*i] == '\"')
+		{
+			*r = 0;
 			break ;
+		}
 	}
-	firstpart = ft_substr(current_str, 0, begin);
-	in_qoutes_part = ft_substr(current_str, begin + 1, (*i - begin - 1));
-	lastpart = ft_strdup(current_str + *i + 1);
+	firstpart = ft_substr(current_s, 0, begin);
+	in_qoutes_part = ft_substr(current_s, begin + 1, (*i - begin - 1));
+	lastpart = ft_strdup(current_s + *i + 1);
 	result = ft_strjoin_with_free(firstpart, in_qoutes_part, 1, 1);
 	result = ft_strjoin_with_free(result, lastpart, 1, 1);
 	return (result);
 }
 
-void	expand_word(t_environment *env, char **start, int *size)
+int	expand_word(t_environment *env, char **start, int *size)
 {
 	char	*current_string;
 	int		i;
+	int		err;
 
 	current_string = ft_substr(*start, 0, *size);
 	i = -1;
+	err = 0;
 	while (current_string && current_string[++i])
 	{
 		if (current_string[i] == '\'')
-			current_string = str_qoutes(current_string, &i);
+		{
+			current_string = str_qoutes(current_string, &i, &err);
+			if (err)
+				break ;
+		}
 		if (current_string[i] == '\\')
 			current_string = str_slash(current_string, &i);
 		if (current_string[i] == '\"')
-			current_string = str_double_qoutes(current_string, &i, env);
+		{
+			current_string = str_double_qoutes(current_string, &i, env, &err);
+			if (err)
+				break ;
+		}
 		if (current_string[i] == '$')
 			current_string = str_expanding(current_string, &i, env);
 	}
@@ -112,4 +130,11 @@ void	expand_word(t_environment *env, char **start, int *size)
 		*size = (int)ft_strlen(current_string);
 	else
 		*size = 0;
+	if (err)
+	{
+		ft_putstr_fd("\n", STDERR_FILENO);
+		ft_putstr_fd(env->info.name_shell, STDERR_FILENO);
+		ft_putstr_fd(": syntax error\n", STDERR_FILENO);
+	}
+	return (err);
 }

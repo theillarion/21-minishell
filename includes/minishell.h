@@ -183,12 +183,14 @@ char			*ft_strjoin_with_free(char *str1, char *str2, int free_1,
 					int free_2);
 char			*get_v(const char *string, int *i, const t_environment *env,
 					int beg);
+//		parser_utilities_syntax.c
+int				check_syntax_token(t_environment *env, size_t i);
 
 //		parser_utilities.c
-void			expand_word(t_environment *env, char **start, int *size);
+int				expand_word(t_environment *env, char **start, int *size);
 
 //		parser.c
-void			parser(t_environment *env);
+int				parser(t_environment *env);
 
 //		executor_utilities.c
 void			find_cmd_in_path(char **args, char **envp);
