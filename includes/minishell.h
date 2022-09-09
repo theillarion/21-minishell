@@ -23,6 +23,8 @@
 #  define PATH_MAX 1024
 # endif 
 
+# define COUNT_FUNCTIONS 7
+
 typedef struct sigaction	t_sigaction;
 
 typedef struct s_prompt
@@ -51,14 +53,14 @@ enum e_status
 
 typedef	struct s_environment
 {
-	t_prompt	prompt;
-	t_info		info;
-	t_sigaction	action;
 	t_vector	variables_env;
 	t_vector	functions;
+	t_sigaction	action;
+	t_info		info;
+	t_prompt	prompt;
+	char		*input_line;
 	char		**envp;
 	bool		is_need_update_envp;
-	char		*input_line;
 	int			last_code;
 }				t_environment;
 
@@ -75,11 +77,11 @@ t_variable_env *ft_get_by_name(const t_vector	*vector, const char *name);
 //		prompt.c
 void	ft_set_new_prompt(const t_vector *variable_env, t_prompt	*prompt, t_info	info);
 
+//		fill.c
+bool	ft_fill(t_environment	*env, char	**envp, const char	*name_shell);
+
 //		init.c
-void	ft_init(t_environment	*env, char	**envp,
-				const char	*name_shell);
-//		error.c
-void	ft_error(const char	*name_shell, const char	*err_msg);
+void	ft_init(t_environment	*env);
 
 //		commands_utilities.c
 char	*ft_get_pwd(void);
@@ -103,15 +105,18 @@ void	ft_foreach(void **array, void (*func)(void *));
 void	ft_smart_free(void	**address);
 void	ft_smart_double_free(void	***address);
 int		ft_smart_atoi(const char	*src, bool	*is_error);
+size_t	ft_size_array(void	**address);
 
 //		signal.c
-void	ft_initial_action(t_sigaction *action);
+void	ft_init_action(t_sigaction *action);
 
-//		deinit.c
-void	ft_deinit(t_environment	*env);
+//		destroy.c
+void	ft_destroy(t_environment	*env);
 
 //		exit.c
-int		ft_exit(t_environment	*env, int status, bool is_clean);
+int		ft_exit(t_environment	*env, int status);
+void	ft_exit_with_message(t_environment	*env, int status,
+			const char	*command, const char	*msg);
 
 //		variable_env.c
 bool	ft_convert_str_to_struct(t_variable_env	*dst, const char	*src);
@@ -123,7 +128,7 @@ bool	ft_is_exist(char const *path);
 bool	ft_which(const char *const *paths, const char *name, char **dst);
 
 //		print
-void	ft_print_error(t_environment	*env, const char *command, const char *msg);
+void	ft_print_error(const t_environment	*env, const char *command, const char *msg);
 void	ft_print_errno(t_environment	*env, const char *command);
 
 //		main.c
