@@ -13,7 +13,7 @@ static void ft_execute_external(t_environment	*env, char **args)
 		status = execve(*args, args, env->envp);
 	ft_smart_free((void **)&program);
 	if (status < 0)
-		ft_error(env->info.name_shell, *args);
+		ft_print_errno(env, *args);
 	exit(status);
 }
 
@@ -55,7 +55,7 @@ void	ft_main_handle(t_environment	*env)
 	ft_smart_free((void **)&env->input_line);
 	env->input_line = readline(env->prompt.current_prompt);
 	if (env->input_line == NULL)
-		ft_exit(env, 0, false);
+		ft_exit(env, 0);
 	if (ft_strlen(env->input_line) > 0)
 		add_history(env->input_line);
 
@@ -79,10 +79,12 @@ int main(int argc, char **argv, char    **envp)
 
 	(void)argc;
 	(void)argv;
-	ft_init(&env, envp, "\033[92mminishell\033[0m");
+	ft_init(&env);
+	if (ft_fill(&env, envp, "\033[92mminishell\033[0m") == false)
+		ft_exit_with_message(&env, COMMON_ERROR, NULL, "filling error");
 	if (sigaction(SIGQUIT, &env.action, NULL) == -1
 		|| sigaction(SIGINT, &env.action, NULL) == -1)
-		ft_print_errno(&env, "sigaction");
+		ft_exit_with_message(&env, COMMON_ERROR, NULL, "set signal error");
 	while (true)
 		ft_main_handle(&env);
 	return (0);
