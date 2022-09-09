@@ -4,12 +4,10 @@ void	ft_push(t_vector	*vector, const char	*string_var)
 {
 	t_variable_env	var;
 
-	if (ft_convert_str_to_struct(&var, string_var) == false)
+	if (ft_convert_str_to_struct(&var, string_var))
 	{
-		// error
-		return;
+		ft_push_back(vector, (void *)&var);
 	}
-	ft_push_back(vector, (void *)&var);
 }
 
 size_t	ft_find_by_name(const t_vector	*vector, const char	*name)
