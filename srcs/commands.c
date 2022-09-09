@@ -31,7 +31,7 @@ int	ft_command_pwd(t_environment	*env, const char *const *args)
 	(void)args;
 	if (env == NULL || env->info.pwd == NULL)
 	{
-		ft_error(env->info.name_shell, "pwd");
+		ft_print_error(env, "pwd", "invalid path");
 		return (COMMON_ERROR);
 	}
 	else
@@ -41,16 +41,15 @@ int	ft_command_pwd(t_environment	*env, const char *const *args)
 	}
 }
 
+static void	ft_print(void	*address)
+{
+	ft_putendl_fd((char *)address, STDOUT_FILENO);
+}
+
 int	ft_command_env(t_environment	*env, const char *const *args)
 {
 	(void)args;
-	if (env == NULL)
-		return (COMMON_ERROR);
-	while (env->envp && *env->envp)
-	{
-		ft_putendl_fd(*env->envp, STDOUT_FILENO);
-		++env->envp;
-	}
+	ft_foreach((void **)env->envp, &ft_print);
 	return (SUCCESS);
 }
 
@@ -58,9 +57,9 @@ int	ft_command_unset(t_environment	*env, const char *const *args)
 {
 	size_t	index;
 
-	if (env == NULL || args == NULL)
-		return (SUCCESS);
-	while (*args)
+	if (env == NULL)
+		return (COMMON_ERROR);
+	while (args && *args)
 	{
 		index = ft_find_by_name(&env->variables_env, *args);
 		if (index < ft_size((const t_vector *)&env->variables_env))
