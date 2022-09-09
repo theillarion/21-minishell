@@ -3,7 +3,7 @@
 void ft_foreach(void **array, void (*func)(void *))
 {
 	while (array && *array)
-		func(*(array++));
+		(*func)(*(array++));
 }
 
 void	ft_smart_free(void	**address)
@@ -43,4 +43,14 @@ int	ft_smart_atoi(const char	*src, bool	*is_error)
 	if (src == NULL || *src != '\0')
 		*is_error = true;
 	return (number * sign);
+}
+
+size_t	ft_size_array(void	**address)
+{
+	size_t	i;
+
+	i = 0;
+	while (address && address[i])
+		++i;
+	return (i);
 }
