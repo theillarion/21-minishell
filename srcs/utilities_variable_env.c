@@ -20,7 +20,10 @@ bool	ft_convert_str_to_struct(t_variable_env	*dst, const char	*src)
 	dst->name = ft_substr(src, 0, (size_t)((ptr - src) / sizeof(*src)));
 	value = ft_substr(src, (size_t)(ptr - src + 1), length - (size_t)(ptr - src + 1));
 	if (dst->name == NULL || ft_check_var_name(dst->name) == false || value == NULL)
+	{
+		ft_smart_free((void **)&value);
 		return (false);
+	}
 	dst->values = ft_split(value, ':');
 	ft_smart_free((void **)&value);
 	if (dst->values == NULL)
@@ -40,7 +43,8 @@ static size_t ft_calc_length(const t_variable_env	*var_env)
 	ptr = var_env->values;
 	while (*ptr)
 		result += ft_strlen(*(ptr++));
-	result += (size_t)(ptr - var_env->values) - 1;
+	if (ptr != var_env->values)
+		result += (size_t)((ptr - var_env->values)) - 1;
 	return (result);
 }
 
@@ -54,13 +58,13 @@ static char	*ft_get_str(const t_variable_env	*var_env)
 	length = ft_calc_length(var_env);
 	result = (char *)malloc((length + 1) * sizeof(*result));
 	i = ft_strlen(var_env->name);
-	memcpy(result, var_env->name, sizeof(*var_env->name) * i);
+	ft_memcpy(result, var_env->name, sizeof(*var_env->name) * i);
 	result[i++] = '=';
 	ptr = var_env->values;
 	while (*ptr)
 	{
 		length = ft_strlen(*ptr);
-		memcpy(result + i, *ptr, sizeof(**ptr) * length);
+		ft_memcpy(result + i, *ptr, sizeof(**ptr) * length);
 		i += length;
 		if (*(ptr + 1))
 			result[i++] = ':';
@@ -72,21 +76,21 @@ static char	*ft_get_str(const t_variable_env	*var_env)
 
 bool	ft_convert_vector_to_array(char	***dst,	const t_vector	*src)
 {
-	char			*str;
-	size_t			i;
+	size_t	i;
+	size_t	length;
 
 	if (dst == NULL)
 		return (false);
-	*dst = (char **)malloc((ft_size(src) + 1) * sizeof(**dst));
+	length = ft_size(src);
+	*dst = (char **)malloc((length + 1) * sizeof(**dst));
 	if (*dst == NULL)
 		return (false);
 	i = 0;
-	while (i < ft_size(src))
+	while (i < length)
 	{
-		str = ft_get_str((const t_variable_env *)ft_get_element(src, i));
-		if (str == NULL)
+		(*dst)[i] = ft_get_str((const t_variable_env *)ft_get_element(src, i));
+		if ((*dst)[i] == NULL)
 			return (false);
-		(*dst)[i] = str;
 		++i;
 	}
 	(*dst)[i] = NULL;

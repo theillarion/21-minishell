@@ -53,8 +53,8 @@ int	get_command(t_environment *env, size_t *i)
 	t_token		*cur_token;
 	int			command_added;
 
-	ft_init_vector(&cmd.redirs, sizeof(t_redir));
-	ft_init_vector(&cmd.args, sizeof(t_token));
+	ft_init_vector(&cmd.redirs, sizeof(t_redir), NULL);
+	ft_init_vector(&cmd.args, sizeof(t_token), NULL);
 	command_added = 0;
 	while (*i < ft_size(&env->tokens))
 	{
@@ -75,7 +75,7 @@ int	parser(t_environment *env)
 {
 	size_t		i;
 
-	ft_init_vector(&env->groups, sizeof(t_command));
+	ft_init_vector(&env->groups, sizeof(t_command), NULL);
 	i = -1;
 	while (++i < ft_size(&env->tokens))
 	{

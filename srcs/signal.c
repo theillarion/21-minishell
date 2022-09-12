@@ -21,7 +21,7 @@ void    ft_handler(int sig, siginfo_t *info, void	*ucontext)
     }
 }
 
-void	ft_initial_action(t_sigaction *action)
+void	ft_init_action(t_sigaction *action)
 {
 	ft_memset(&(*action), 0, sizeof(*action));
 	action->sa_flags = SA_SIGINFO;

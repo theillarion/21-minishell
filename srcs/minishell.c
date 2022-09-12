@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "minishell.h"
 
 typedef const char *const * t_double_ptr;
 
@@ -11,12 +11,9 @@ static void	execute(t_environment	*env)
 	if (pid)
 	{
 		if (waitpid(pid, &status, 0) == -1)
-			ft_print_error(env, "error", "waitpid error\n");
-		if (WIFEXITED(status) != 0)
+			ft_print_errno(env, "waitpid");
+		else if (WIFEXITED(status) != 0)
 			env->last_code = WEXITSTATUS(status);
-		else
-			ft_print_error(env, "error", "error");
-		postactions(env);
 	}
 }
 
@@ -27,11 +24,11 @@ void	ft_main_handle(t_environment	*env)
 	ft_smart_free((void **)&env->input_line);
 	env->input_line = readline(env->prompt.current_prompt);
 	if (env->input_line == NULL)
-		ft_exit(env, 0, false);
+		ft_exit(env, 0);
 	if (ft_strlen(env->input_line) > 0)
 	{
 		add_history(env->input_line);
-		ft_init_vector(&env->tokens, sizeof(t_token));
+		ft_init_vector(&env->tokens, sizeof(t_token), NULL);
 		lexer(env);
 		if (parser(env) == 0)
 			execute(env);
@@ -51,10 +48,12 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	ft_init(&env, envp, "\033[92mminishell\033[0m");
+	ft_init(&env);
+	if (ft_fill(&env, envp, "\033[92mminishell\033[0m") == false)
+		ft_exit_with_message(&env, COMMON_ERROR, NULL, "filling error");
 	if (sigaction(SIGQUIT, &env.action, NULL) == -1
 		|| sigaction(SIGINT, &env.action, NULL) == -1)
-		ft_print_errno(&env, "sigaction");
+		ft_exit_with_message(&env, COMMON_ERROR, NULL, "set signal error");
 	while (true)
 		ft_main_handle(&env);
 	return (0);
