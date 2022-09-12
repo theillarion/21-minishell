@@ -9,6 +9,7 @@ char	*str_slash(char *current_string, int *i)
 	firstpart = ft_substr(current_string, 0, *i);
 	lastpart = ft_strdup(current_string + *i);
 	result = ft_strjoin_with_free(firstpart, lastpart, 1, 1);
+	free(current_string);
 	return (result);
 }
 
@@ -35,6 +36,7 @@ char	*str_qoutes(char *current_str, int *i, int *r)
 	lastpart = ft_strdup(current_str + *i + 1);
 	result = ft_strjoin_with_free(firstpart, in_qoutes_part, 1, 1);
 	result = ft_strjoin_with_free(result, lastpart, 1, 1);
+	free(current_str);
 	return (result);
 }
 
@@ -63,6 +65,7 @@ char	*str_expanding(char *current_string, int *i, t_environment *env)
 	}
 	result = ft_strjoin_with_free(firstpart, var_value, 1, 1);
 	result = ft_strjoin_with_free(result, lastpart, 1, 1);
+	free(current_string);
 	return (result);
 }
 
@@ -94,6 +97,7 @@ char	*str_double_qoutes(char *current_s, int *i, t_environment *env, int *r)
 	lastpart = ft_strdup(current_s + *i + 1);
 	result = ft_strjoin_with_free(firstpart, in_qoutes_part, 1, 1);
 	result = ft_strjoin_with_free(result, lastpart, 1, 1);
+	free(current_s);
 	return (result);
 }
 
@@ -104,6 +108,8 @@ int	expand_word(t_environment *env, char **start, int *size)
 	int		err;
 
 	current_string = ft_substr(*start, 0, *size);
+	if (!current_string)
+		return (1);
 	i = -1;
 	err = 0;
 	while (current_string && current_string[++i])
@@ -131,10 +137,6 @@ int	expand_word(t_environment *env, char **start, int *size)
 	else
 		*size = 0;
 	if (err)
-	{
-		ft_putstr_fd("\n", STDERR_FILENO);
-		ft_putstr_fd(env->info.name_shell, STDERR_FILENO);
-		ft_putstr_fd(": syntax error\n", STDERR_FILENO);
-	}
+		return (ft_syntax_error(env));
 	return (err);
 }

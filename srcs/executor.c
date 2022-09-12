@@ -6,8 +6,6 @@ void	ft_exec_command(t_environment *env, t_command *cmd, int is_child)
 	char	**envp;
 	char	**args;
 
-	command = ft_substr(cmd->command->start, 0, cmd->command->size);
-	ft_convert_vector_to_array(&envp, &env->variables_env);
 	ft_convert_token_vector_to_str_array(&args, &cmd->args);
 	if (cmd->builtin)
 	{
@@ -17,6 +15,8 @@ void	ft_exec_command(t_environment *env, t_command *cmd, int is_child)
 	}
 	else
 	{
+		command = ft_substr(cmd->command->start, 0, cmd->command->size);
+		ft_convert_vector_to_array(&envp, &env->variables_env);
 		if (ft_strchr(command, '/') != NULL)
 			execve(command, args, envp);
 		find_cmd_in_path(args, envp);

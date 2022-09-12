@@ -74,3 +74,32 @@ void	find_cmd_in_path(char **args, char **envp)
 	free_paths(paths_bkp);
 	exit_find_failure(args, access_denied_path);
 }
+
+void	ft_free_groups(t_environment *env)
+{
+	size_t		i;
+	t_command	*current;
+	t_token		*token;
+
+	i = -1;
+	while (++i < ft_size(&env->groups))
+	{
+		current = ft_get_element(&env->groups, i);
+		free(current->command->start);
+		ft_erase_all(&current->args);
+		ft_erase_all(&current->redirs);
+	}
+	ft_erase_all(&env->groups);
+	i = -1;
+	while (++i < ft_size(&env->tokens))
+	{
+		token = ft_get_element(&env->tokens, i);
+		free(token->start);
+	}
+	ft_erase_all(&env->tokens);
+}
+
+void	postactions(t_environment *env)
+{
+	ft_free_groups(env);
+}

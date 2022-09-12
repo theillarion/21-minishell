@@ -183,6 +183,7 @@ char			*ft_strjoin_with_free(char *str1, char *str2, int free_1,
 char			*get_v(const char *string, int *i, const t_environment *env,
 					int beg);
 //		parser_utilities_syntax.c
+int				ft_syntax_error(t_environment *env);
 int				check_syntax_token(t_environment *env, size_t i);
 
 //		parser_utilities.c
@@ -192,6 +193,7 @@ int				expand_word(t_environment *env, char **start, int *size);
 int				parser(t_environment *env);
 
 //		executor_utilities.c
+void			postactions(t_environment *env);
 void			find_cmd_in_path(char **args, char **envp);
 
 //		executor.c

@@ -11,11 +11,12 @@ static void	execute(t_environment	*env)
 	if (pid)
 	{
 		if (waitpid(pid, &status, 0) == -1)
-			ft_raise_error("waitpid error\n");
+			ft_print_error(env, "error", "waitpid error\n");
 		if (WIFEXITED(status) != 0)
 			env->last_code = WEXITSTATUS(status);
 		else
 			ft_print_error(env, "error", "error");
+		postactions(env);
 	}
 }
 
