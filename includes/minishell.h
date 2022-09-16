@@ -17,7 +17,7 @@
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <errno.h>
-# include <linux/limits.h>
+//# include <linux/limits.h>
 # include <fcntl.h>
 # include "get_next_line.h"
 
@@ -195,6 +195,9 @@ int				expand_word(t_environment *env, char **start, int *size);
 
 //		parser.c
 int				parser(t_environment *env);
+
+//		paths_utilities.c
+void			free_command_args(char **args);
 
 //		executor_utilities.c
 void			postactions(t_environment *env);
