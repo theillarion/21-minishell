@@ -1,4 +1,5 @@
 #include "minishell.h"
+#include <sys/ioctl.h>
 
 typedef const char *const * t_double_ptr;
 
@@ -22,6 +23,8 @@ static void	ft_fork(t_environment	*env, char **args)
 	pid_t	pid;
 	int		status;
 
+    signal(SIGINT, ft_handle_signal_child);
+    signal(SIGQUIT, ft_handle_signal_child);
 	pid = fork();
 	if (pid < 0)
 		ft_print_errno(env, "fork");
@@ -30,7 +33,10 @@ static void	ft_fork(t_environment	*env, char **args)
 	else
 	{
 		if (waitpid(pid, &status, 0) == -1)
-			ft_print_errno(env, "waitpid");
+        {
+            if (errno != EINTR)
+                ft_print_errno(env, "waitpid");
+        }
 		else if (WIFEXITED(status) != 0)
 			env->last_code = WEXITSTATUS(status);
 	}
@@ -45,7 +51,6 @@ void	ft_exucute_program(t_environment	*env, char **args)
 		ft_fork(env, args);
 	else
 		((t_function *)ft_get_element(&env->functions, index))->func(env, (t_double_ptr)++args);
-	
 }
 
 void	ft_main_handle(t_environment	*env)
@@ -61,9 +66,11 @@ void	ft_main_handle(t_environment	*env)
 
 	// TEMP
 	char **temp = ft_split(env->input_line, ' ');
-	ft_exucute_program(env, temp);
-	ft_smart_double_free((void ***)&temp);
-
+    if (temp && *temp)
+    {
+        ft_exucute_program(env, temp);
+        ft_smart_double_free((void ***)&temp);
+    }
 	if (env->is_need_update_envp)
 	{
 		env->is_need_update_envp = false;
@@ -82,10 +89,11 @@ int main(int argc, char **argv, char    **envp)
 	ft_init(&env);
 	if (ft_fill(&env, envp, "\033[92mminishell\033[0m") == false)
 		ft_exit_with_message(&env, COMMON_ERROR, NULL, "filling error");
-	if (sigaction(SIGQUIT, &env.action, NULL) == -1
-		|| sigaction(SIGINT, &env.action, NULL) == -1)
-		ft_exit_with_message(&env, COMMON_ERROR, NULL, "set signal error");
 	while (true)
-		ft_main_handle(&env);
+    {
+        signal(SIGINT, ft_handle_signal);
+        signal(SIGQUIT, SIG_IGN);
+        ft_main_handle(&env);
+    }
 	return (0);
 }
