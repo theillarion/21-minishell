@@ -15,7 +15,6 @@ void	ft_init(t_environment	*env)
 		return;
 	ft_init_vector(&env->variables_env, sizeof(t_variable_env), &ft_delete_element);
 	ft_init_vector(&env->functions, sizeof(t_function), NULL);
-	ft_init_action(&env->action);
 	env->info.name_shell = NULL;
 	env->info.pwd = NULL;
 	env->prompt.current_prompt = NULL;

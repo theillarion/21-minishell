@@ -143,7 +143,8 @@ int				ft_smart_atoi(const char	*src, bool	*is_error);
 size_t			ft_size_array(void	**address);
 
 //		signal.c
-void			ft_init_action(t_sigaction *action);
+void			ft_handle_signal(int signal);
+void			ft_handle_signal_child(int signal);
 
 //		destroy.c
 void			ft_destroy(t_environment	*env);

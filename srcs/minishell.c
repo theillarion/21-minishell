@@ -1,4 +1,5 @@
 #include "minishell.h"
+#include <sys/ioctl.h>
 
 typedef const char *const * t_double_ptr;
 
@@ -7,6 +8,8 @@ static void	execute(t_environment	*env)
 	int		status;
 	pid_t	pid;
 
+	signal(SIGINT, ft_handle_signal_child);
+	signal(SIGQUIT, ft_handle_signal_child);
 	pid = executor(env);
 	if (pid)
 	{
@@ -55,10 +58,11 @@ int	main(int argc, char **argv, char **envp)
 	ft_init(&env);
 	if (ft_fill(&env, envp, "\033[92mminishell\033[0m") == false)
 		ft_exit_with_message(&env, COMMON_ERROR, NULL, "filling error");
-	if (sigaction(SIGQUIT, &env.action, NULL) == -1
-		|| sigaction(SIGINT, &env.action, NULL) == -1)
-		ft_exit_with_message(&env, COMMON_ERROR, NULL, "set signal error");
 	while (true)
-		ft_main_handle(&env);
+    {
+        signal(SIGINT, ft_handle_signal);
+        signal(SIGQUIT, SIG_IGN);
+        ft_main_handle(&env);
+    }
 	return (0);
 }
