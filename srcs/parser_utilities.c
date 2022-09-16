@@ -51,12 +51,20 @@ char	*str_expanding(char *current_string, int *i, t_environment *env)
 	beginning = *i;
 	while (current_string[++(*i)])
 	{
+		if (current_string[*i] == '?')
+		{
+			(*i)++;
+			break;
+		}
 		if (!ft_isalnum(current_string[*i]) && current_string[*i] != '_')
 			break ;
 	}
 	firstpart = ft_substr(current_string, 0, beginning);
 	lastpart = ft_strdup(current_string + *i);
-	var_value = get_v(current_string, i, env, beginning);
+	if (current_string[(*i) - 1] == '?')
+		var_value = ft_itoa(env->last_code);
+	else
+		var_value = get_v(current_string, i, env, beginning);
 	if (!var_value && !ft_strlen(firstpart) && !ft_strlen(lastpart))
 	{
 		free(firstpart);

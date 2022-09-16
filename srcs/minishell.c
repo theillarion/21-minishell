@@ -11,9 +11,13 @@ static void	execute(t_environment	*env)
 	if (pid)
 	{
 		if (waitpid(pid, &status, 0) == -1)
-			ft_print_errno(env, "waitpid");
+		{
+			if (errno != EINTR)
+				ft_print_errno(env, "waitpid");
+		}
 		else if (WIFEXITED(status) != 0)
 			env->last_code = WEXITSTATUS(status);
+		postactions(env);
 	}
 }
 

@@ -1,9 +1,13 @@
 #include "minishell.h"
 
-void	double_sized_token(char **input, char *res, t_token *ttoken, char type)
+void	double_sized_token(char **input, char *res, t_token *ttoken, char sym)
 {
-	(*res) = type;
-	(*ttoken).size = 2;
+	(*res) = sym;
+	(*ttoken).size = 1;
+	if ((**input) == '+')
+		(*ttoken).type = t_r_outa;
+	if ((**input) == 'h')
+		(*ttoken).type = t_hd;
 	*input = *input + 1;
 }
 
@@ -13,20 +17,16 @@ void	parse_token(char **input, t_token *ttoken)
 	{
 		if (*(*input + 1) == '>')
 			double_sized_token(input, *input, ttoken, '+');
+		else
+			(*ttoken).type = t_r_out;
 	}
 	else if (**input == '<')
 	{
 		if (*(*input + 1) == '<')
 			double_sized_token(input, *input, ttoken, 'h');
+		else
+			(*ttoken).type = t_r_in;
 	}
-	if ((**input) == '<')
-		(*ttoken).type = t_r_in;
-	if ((**input) == '>')
-		(*ttoken).type = t_r_out;
-	if ((**input) == '+')
-		(*ttoken).type = t_r_outa;
-	if ((**input) == 'h')
-		(*ttoken).type = t_hd;
 	if ((**input) == '|')
 		(*ttoken).type = t_pipe;
 }

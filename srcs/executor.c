@@ -10,8 +10,9 @@ void	ft_exec_command(t_environment *env, t_command *cmd, int is_child)
 	if (cmd->builtin)
 	{
 		if (is_child)
-			exit(cmd->builtin->func(env, (const char *const *)(++args)));
-		cmd->builtin->func(env, (const char *const *)(++args));
+			exit(cmd->builtin->func(env, (const char *const *)(args + 1)));
+		cmd->builtin->func(env, (const char *const *)(args + 1));
+		free_command_args(args);
 	}
 	else
 	{
@@ -72,7 +73,9 @@ pid_t	go_throw_groups(t_environment *env, pid_t pid, int pipe_fd[2][2])
 		if (pid == -1)
 			ft_print_error(env, NULL, "fork error");
 		else if (pid == 0)
+		{
 			proc_prep(env, current, pipe_fd, 1);
+		}
 		else
 		{
 			if (close(pipe_fd[current % 2][1]) == -1)
