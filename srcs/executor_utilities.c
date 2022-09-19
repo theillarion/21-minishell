@@ -33,7 +33,12 @@ void	ft_free_groups(t_environment *env)
 		token = ft_get_element(&env->tokens, i);
 			free(token->start);
 		if (token->type == t_r_out || token->type == t_r_outa || token->type == t_r_in || token->type == t_hd)
+		{
 			++i;
+			token = ft_get_element(&env->tokens, i);
+			if (token->type == t_sep)
+				i++;
+		}
 	}
 	ft_erase_all(&env->tokens);
 }

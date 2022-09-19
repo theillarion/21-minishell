@@ -21,10 +21,10 @@ int	check_syntax_token(t_environment *env, size_t i)
 		last_token = (t_token *) ft_get_element(&env->tokens, i - 1);
 		lt = last_token->type;
 		if ((lt == t_r_in || lt == t_r_out || lt == t_r_outa || lt == t_hd)
-			&& ct != t_word)
+			&& (ct != t_word && ct != t_sep))
 			return (ft_syntax_error(env));
 	}
-	if (i + 1 == ft_size(&env->tokens) && ct != t_word)
+	if (i + 1 == ft_size(&env->tokens) && (ct != t_word && ct != t_sep))
 		return (ft_syntax_error(env));
 	return (0);
 }

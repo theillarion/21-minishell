@@ -41,12 +41,16 @@ void	parse_token_word(char **input, t_token *ttoken)
 			*input = *input + 1;
 			while (**input && !ft_strchr("\'", **input))
 				*input = *input + 1;
+			*input = *input + 1;
+			break ;
 		}
 		if (ft_strchr("\"", **input))
 		{
 			*input = *input + 1;
 			while (**input && !ft_strchr("\"", **input))
 				*input = *input + 1;
+			*input = *input + 1;
+			break ;
 		}
 		*input = *input + 1;
 	}
@@ -56,9 +60,22 @@ void	parse_token_word(char **input, t_token *ttoken)
 int	get_token(char **input, t_vector *tokens)
 {
 	t_token	ttoken;
+	int 	isspace_here;
 
+	isspace_here = 0;
 	while (**input && ft_isspace(**input))
+	{
 		*input = *input + 1;
+		isspace_here = 1;
+	}
+	if (isspace_here)
+	{
+		ttoken.start = *input - 1;
+		ttoken.type = t_sep;
+		ttoken.size = 1;
+		ft_push_back(tokens, &ttoken);
+		return (**input);
+	}
 	if (!(**input))
 		return (0);
 	ttoken.start = *input;
@@ -69,7 +86,9 @@ int	get_token(char **input, t_vector *tokens)
 		*input = *input + 1;
 	}
 	else
+	{
 		parse_token_word(input, &ttoken);
+	}
 	if (ttoken.size)
 		ft_push_back(tokens, &ttoken);
 	return (**input);

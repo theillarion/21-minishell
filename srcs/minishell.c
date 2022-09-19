@@ -53,6 +53,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_environment	env;
 
+	rl_catch_signals = 0;
 	(void)argc;
 	(void)argv;
 	ft_init(&env);

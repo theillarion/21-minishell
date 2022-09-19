@@ -51,10 +51,15 @@ char	*str_expanding(char *current_string, int *i, t_environment *env)
 	beginning = *i;
 	while (current_string[++(*i)])
 	{
-		if (current_string[*i] == '?')
+		if (*i == beginning + 1 && current_string[*i] == '?')
 		{
 			(*i)++;
 			break;
+		}
+		if (*i == beginning + 1 && !ft_isalpha(current_string[*i]))
+		{
+			(*i)++;
+			break ;
 		}
 		if (!ft_isalnum(current_string[*i]) && current_string[*i] != '_')
 			break ;

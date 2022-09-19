@@ -109,14 +109,28 @@ bool	ft_convert_token_vector_to_str_array(char	***dst,	const t_vector	*src)
 	if (*dst == NULL)
 		return (false);
 	i = -1;
+	int j=0;
+
 	while (++i < ft_size(src))
 	{
 		token = (t_token *)ft_get_element(src, i);
-		str = ft_substr(token->start, 0, token->size);
+//		if (token->type == t_sep)
+//			continue ;
+		str = NULL;
+		while (token->type != t_sep && i < ft_size(src))
+		{
+			str = ft_strjoin(str, ft_substr(token->start, 0, token->size));
+			i++;
+			token = (t_token *)ft_get_element(src, i);
+			if (token->type == t_sep)
+				break ;
+		}
+
 		if (str == NULL)
 			return (false);
-		(*dst)[i] = str;
+		(*dst)[j] = str;
+		j++;
 	}
-	(*dst)[i] = NULL;
+	(*dst)[j] = NULL;
 	return (true);
 }

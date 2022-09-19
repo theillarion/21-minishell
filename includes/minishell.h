@@ -60,7 +60,8 @@ enum e_Token
 	t_r_in,
 	t_hd,
 	t_r_out,
-	t_r_outa
+	t_r_outa,
+	t_sep
 };
 
 typedef struct s_token

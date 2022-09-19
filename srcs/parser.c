@@ -10,6 +10,8 @@ int	add_redirect(t_vector *redirs, t_token *token, t_vector *tokens, size_t *i)
 		return (0);
 	(*i)++;
 	next_token = (t_token *)ft_get_element(tokens, *i);
+	if (next_token->type == t_sep)
+		next_token = (t_token *)ft_get_element(tokens, ++(*i));
 	if (!next_token)
 		return (0);
 	redir.arg = next_token;
@@ -35,9 +37,9 @@ void	find_builtin(const t_environment *env, t_command *cmd, t_token *token)
 
 void	process_word(t_environment *env, t_command *cmd, t_token *tkn, int *ca)
 {
-	if (tkn->type == t_word)
+	if (tkn->type == t_word || tkn->type == t_sep)
 	{
-		if (!*ca)
+		if (!*ca && tkn->type == t_word)
 		{
 			*ca = 1;
 			(*cmd).command = tkn;
