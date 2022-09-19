@@ -6,22 +6,13 @@ typedef const char *const * t_double_ptr;
 static void	execute(t_environment	*env)
 {
 	int		status;
-	pid_t	pid;
 
 	signal(SIGINT, ft_handle_signal_child);
 	signal(SIGQUIT, ft_handle_signal_child);
-	pid = executor(env);
-	if (pid)
-	{
-		if (waitpid(pid, &status, 0) == -1)
-		{
-			if (errno != EINTR)
-				ft_print_errno(env, "waitpid");
-		}
-		else if (WIFEXITED(status) != 0)
-			env->last_code = WEXITSTATUS(status);
-		postactions(env);
-	}
+	status = executor(env);
+	if (WIFEXITED(status) != 0)
+		env->last_code = WEXITSTATUS(status);
+	postactions(env);
 }
 
 void	ft_main_handle(t_environment	*env)

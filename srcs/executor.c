@@ -64,6 +64,7 @@ void	proc_prep(t_environment *env, size_t i, int pipe_fd[2][2], int is_chld)
 pid_t	go_throw_groups(t_environment *env, pid_t pid, int pipe_fd[2][2])
 {
 	size_t		current;
+	int 		status;
 
 	current = -1;
 	while (++current < ft_size(&env->groups))
@@ -81,13 +82,15 @@ pid_t	go_throw_groups(t_environment *env, pid_t pid, int pipe_fd[2][2])
 			if (close(pipe_fd[current % 2][1]) == -1)
 				ft_raise_error("close fd error\n");
 		}
+		if (wait(&status) == -1)
+			ft_print_errno(env, "waitpid");
 	}
-	return (pid);
+	return (status);
 }
 
 int	executor(t_environment *env)
 {
-	pid_t		pid;
+	int			pid;
 	int			pipe_fd[2][2];
 	t_command	*cur_cmd;
 
