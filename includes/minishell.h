@@ -111,10 +111,12 @@ size_t			ft_find_by_name(const t_vector	*vector, const char	*name);
 t_variable_env	*ft_get_by_name(const t_vector	*vector, const char *name);
 
 //		prompt.c
-void			ft_set_new_prompt(const t_vector *variable_env, t_prompt	*prompt, t_info	info);
+void			ft_set_new_prompt(const t_vector *variable_env,
+					t_prompt *prompt, t_info info);
 
 //		fill.c
-bool			ft_fill(t_environment	*env, char	**envp, const char	*name_shell);
+bool			ft_fill(t_environment	*env, char	**envp,
+					const char	*name_shell);
 
 //		init.c
 void			ft_init(t_environment	*env);
@@ -162,8 +164,8 @@ bool			ft_convert_token_vector_to_str_array(char ***dst,
 					const t_vector *src);
 
 //		in_out_files.c
-void			input_file_fd(t_redir *token);
-void			output_file_fd(t_redir *token);
+void			input_file_fd(t_redir *token, int pipe_fd[2]);
+void			output_file_fd(t_redir *token, int pipe_fd[2]);
 
 //		ft_isspace.c
 int				ft_isspace(int c);
@@ -215,7 +217,8 @@ bool			ft_which(const char *const *paths, const char *name,
 					char **dst);
 
 //		print
-void			ft_print_error(const t_environment	*env, const char *command, const char *msg);
+void			ft_print_error(const t_environment	*env, const char *command,
+					const char *msg);
 void			ft_print_errno(t_environment	*env, const char *command);
 
 //		main.c

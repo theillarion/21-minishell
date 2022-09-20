@@ -34,11 +34,11 @@ void	serve_redirects(size_t i, int pipe_fd[2][2], t_command *cmd)
 	{
 		redir = (t_redir *)ft_get_element(&cmd->redirs, r);
 		if (redir->r_type == t_r_in)
-			input_file_fd(redir);
+			input_file_fd(redir, pipe_fd[i % 2]);
 		if (redir->r_type == t_hd)
 			here_doc(redir, pipe_fd[i % 2]);
 		if (redir->r_type == t_r_out || redir->r_type == t_r_outa)
-			output_file_fd(redir);
+			output_file_fd(redir, pipe_fd[i % 2]);
 	}
 }
 
@@ -63,9 +63,11 @@ void	proc_prep(t_environment *env, size_t i, int pipe_fd[2][2], int is_chld)
 
 pid_t	go_throw_groups(t_environment *env, pid_t pid, int pipe_fd[2][2])
 {
-	size_t		current;
-	int 		status;
+	size_t	current;
+	int		status;
+	pid_t *pids;
 
+	pids = malloc(ft_size(&env->groups) * sizeof(pid_t));
 	current = -1;
 	while (++current < ft_size(&env->groups))
 	{
@@ -74,16 +76,23 @@ pid_t	go_throw_groups(t_environment *env, pid_t pid, int pipe_fd[2][2])
 		if (pid == -1)
 			ft_print_error(env, NULL, "fork error");
 		else if (pid == 0)
-		{
 			proc_prep(env, current, pipe_fd, 1);
-		}
 		else
 		{
+			if (current && close(pipe_fd[(!(current % 2))][0]) == -1)
+				ft_raise_error("close fd error\n");
 			if (close(pipe_fd[current % 2][1]) == -1)
 				ft_raise_error("close fd error\n");
+			pids[current] = pid;
 		}
-		if (wait(&status) == -1)
-			ft_print_errno(env, "waitpid");
+	}
+	if (waitpid(-1, &status, 0) == -1)
+		ft_print_errno(env, "wait error");
+	current = -1;
+	while (++current < ft_size(&env->groups))
+	{
+		wait(0);
+		kill(pids[current], SIGTERM);
 	}
 	return (status);
 }

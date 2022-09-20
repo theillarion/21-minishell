@@ -102,6 +102,7 @@ bool	ft_convert_token_vector_to_str_array(char	***dst,	const t_vector	*src)
 	char			*str;
 	size_t			i;
 	t_token 		*token;
+	int 			j;
 
 	if (dst == NULL)
 		return (false);
@@ -109,8 +110,7 @@ bool	ft_convert_token_vector_to_str_array(char	***dst,	const t_vector	*src)
 	if (*dst == NULL)
 		return (false);
 	i = -1;
-	int j=0;
-
+	j = 0;
 	while (++i < ft_size(src))
 	{
 		token = (t_token *)ft_get_element(src, i);

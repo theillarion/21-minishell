@@ -60,9 +60,10 @@ void	parse_token_word(char **input, t_token *ttoken)
 int	get_token(char **input, t_vector *tokens)
 {
 	t_token	ttoken;
-	int 	isspace_here;
+	int		isspace_here;
 
 	isspace_here = 0;
+	ttoken.size = 1;
 	while (**input && ft_isspace(**input))
 	{
 		*input = *input + 1;
@@ -72,23 +73,19 @@ int	get_token(char **input, t_vector *tokens)
 	{
 		ttoken.start = *input - 1;
 		ttoken.type = t_sep;
-		ttoken.size = 1;
 		ft_push_back(tokens, &ttoken);
 		return (**input);
 	}
 	if (!(**input))
 		return (0);
 	ttoken.start = *input;
-	ttoken.size = 1;
 	if (ft_strchr("<>|", **input))
 	{
 		parse_token(input, &ttoken);
 		*input = *input + 1;
 	}
 	else
-	{
 		parse_token_word(input, &ttoken);
-	}
 	if (ttoken.size)
 		ft_push_back(tokens, &ttoken);
 	return (**input);

@@ -54,7 +54,7 @@ char	*str_expanding(char *current_string, int *i, t_environment *env)
 		if (*i == beginning + 1 && current_string[*i] == '?')
 		{
 			(*i)++;
-			break;
+			break ;
 		}
 		if (*i == beginning + 1 && !ft_isalpha(current_string[*i]))
 		{

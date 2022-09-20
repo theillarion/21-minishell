@@ -31,8 +31,9 @@ void	ft_free_groups(t_environment *env)
 	while (++i < ft_size(&env->tokens))
 	{
 		token = ft_get_element(&env->tokens, i);
-			free(token->start);
-		if (token->type == t_r_out || token->type == t_r_outa || token->type == t_r_in || token->type == t_hd)
+		free(token->start);
+		if (token->type == t_r_out || token->type == t_r_outa
+			|| token->type == t_r_in || token->type == t_hd)
 		{
 			++i;
 			token = ft_get_element(&env->tokens, i);

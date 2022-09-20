@@ -23,16 +23,14 @@ void	here_doc(t_redir *token, int pipe_fd[2])
 	free(token_delimiter);
 	if (!delimit)
 		ft_raise_error("malloc delimiter error\n");
-	ft_putstr_fd("> ", 1);
-	str = get_next_line(0);
+	str = readline("> ");
 	while (str)
 	{
 		if (!ft_strncmp(delimit, str, ft_strlen(str)))
 			finalize_heredoc(pipe_fd, str, delimit, EXIT_SUCCESS);
 		ft_putstr_fd(str, pipe_fd[1]);
 		free(str);
-		ft_putstr_fd("> ", 1);
-		str = get_next_line(0);
+		str = readline("> ");
 	}
 	finalize_heredoc(pipe_fd, str, delimit, EXIT_FAILURE);
 }

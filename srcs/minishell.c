@@ -1,8 +1,10 @@
 #include "minishell.h"
 #include <sys/ioctl.h>
 
-typedef const char *const * t_double_ptr;
-
+static int event(void)
+{
+	return (0);
+}
 static void	execute(t_environment	*env)
 {
 	int		status;
@@ -44,14 +46,16 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_environment	env;
 
-	rl_catch_signals = 0;
 	(void)argc;
 	(void)argv;
+	rl_catch_signals = 0;
+	rl_event_hook = event;
 	ft_init(&env);
 	if (ft_fill(&env, envp, "\033[92mminishell\033[0m") == false)
 		ft_exit_with_message(&env, COMMON_ERROR, NULL, "filling error");
 	while (true)
     {
+
         signal(SIGINT, ft_handle_signal);
         signal(SIGQUIT, SIG_IGN);
         ft_main_handle(&env);

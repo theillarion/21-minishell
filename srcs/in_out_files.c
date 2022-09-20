@@ -1,6 +1,6 @@
 #include "../includes/minishell.h"
 
-void	input_file_fd(t_redir *token)
+void	input_file_fd(t_redir *token, int pipe_fd[2])
 {
 	char	*path;
 	int		read_fd;
@@ -10,12 +10,12 @@ void	input_file_fd(t_redir *token)
 	if (read_fd == -1)
 		ft_raise_perror(path, 0);
 	if (dup2(read_fd, 0) == -1)
-		ft_raise_perror(path, 0);
+		ft_raise_perror(path, pipe_fd[0]);
 	if (close(read_fd) == -1)
 		ft_raise_perror(path, 0);
 }
 
-void	output_file_fd(t_redir *token)
+void	output_file_fd(t_redir *token, int pipe_fd[2])
 {
 	char	*path;
 	int		flags;
@@ -30,7 +30,7 @@ void	output_file_fd(t_redir *token)
 	write_fd = open(path, flags, 0644);
 	if (write_fd == -1)
 		ft_raise_perror(path, 0);
-	if (dup2(write_fd, 1) == -1)
+	if (dup2(write_fd, pipe_fd[1]) == -1)
 		ft_raise_perror(path, 0);
 	if (close(write_fd) == -1)
 		ft_raise_perror(path, 0);
