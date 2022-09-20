@@ -88,6 +88,8 @@ pid_t	go_throw_groups(t_environment *env, pid_t pid, int pipe_fd[2][2])
 	}
 	if (waitpid(-1, &status, 0) == -1)
 		ft_print_errno(env, "wait error");
+	if (pipe_fd[0][0])
+		close(pipe_fd[0][0]);
 	current = -1;
 	while (++current < ft_size(&env->groups))
 	{
