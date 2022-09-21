@@ -32,7 +32,7 @@ int	ft_command_export(t_environment	*env, const char *const *args)
 		return (ft_command_env(env, args));
 	while (*args)
 	{
-		if (ft_convert_str_to_struct(&var_env, *args))
+		if (ft_convert_str_to_struct(&env->variables_env, &var_env, *args))
 		{
 			index = ft_find_by_name(&env->variables_env, var_env.name);
 			if (index < ft_size(&env->variables_env))
@@ -40,6 +40,8 @@ int	ft_command_export(t_environment	*env, const char *const *args)
 			ft_push_back(&env->variables_env, (void *)&var_env);
 			env->is_need_update_envp = true;
 		}
+		else
+			ft_print_error(env, "export", "invalid identifier");
 		++args;
 	}
 	return (SUCCESS);
