@@ -1,13 +1,15 @@
 #include "minishell.h"
 
-void	ft_push(t_vector	*vector, const char	*string_var)
+bool	ft_push(t_vector	*vector, const char	*string_var)
 {
 	t_variable_env	var;
 
-	if (ft_convert_str_to_struct(&var, string_var))
+	if (ft_convert_str_to_struct(vector, &var, string_var))
 	{
 		ft_push_back(vector, (void *)&var);
+		return (true);
 	}
+	return (false);
 }
 
 size_t	ft_find_by_name(const t_vector	*vector, const char	*name)
@@ -30,6 +32,12 @@ size_t	ft_find_by_name(const t_vector	*vector, const char	*name)
 
 t_variable_env *ft_get_by_name(const t_vector	*vector, const char *name)
 {
-	return ((t_variable_env *)ft_get_element(vector,
-			ft_find_by_name(vector, name)));
+	void	*ptr;
+	size_t	find_index;
+
+	find_index = ft_find_by_name(vector, name);
+	if (find_index == SIZE_MAX)
+		return (NULL);
+	ptr = ft_get_element(vector, find_index);
+	return ((t_variable_env *)ptr);
 }
