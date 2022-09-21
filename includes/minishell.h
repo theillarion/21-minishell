@@ -69,7 +69,7 @@ typedef struct s_function
 	int (*func)(t_environment *, const char *const*);
 }		t_function;
 
-void	ft_push(t_vector	*vector, const char	*string_var);
+bool	ft_push(t_vector	*vector, const char	*string_var);
 size_t	ft_find_by_name(const t_vector	*vector, const char	*name);
 t_variable_env *ft_get_by_name(const t_vector	*vector, const char *name);
 
@@ -119,7 +119,8 @@ void	ft_exit_with_message(t_environment	*env, int status,
 			const char	*command, const char	*msg);
 
 //		variable_env.c
-bool	ft_convert_str_to_struct(t_variable_env	*dst, const char	*src);
+bool	ft_convert_str_to_struct(const t_vector	*variable_env,
+			t_variable_env	*dst, const char	*src);
 bool	ft_convert_vector_to_array(char	***dst,	const t_vector	*src);
 
 //		file_utilities.c
