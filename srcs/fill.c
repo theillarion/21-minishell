@@ -13,7 +13,11 @@ static void	ft_fill_variables_env(t_vector	*vector, char	**envp)
 	i = 0;
 	while (envp[i] != NULL)
 	{
-		ft_push(vector, envp[i]);
+		if (!ft_push(vector, envp[i]))
+		{
+			ft_clear_vector(vector);
+			break ;
+		}	
 		++i;
 	}
 }
