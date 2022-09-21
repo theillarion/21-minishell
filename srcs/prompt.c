@@ -2,24 +2,27 @@
 
 static char *ft_get_smart_pwd(const t_vector	*variable_env, const char *pwd)
 {
-	char	**ptr;
-	char	*result;
-	size_t	length;
+	t_variable_env	*ptr;
+	char			*result;
+	size_t			length;
 
-	ptr = ft_get_by_name(variable_env, "HOME")->values;
+	ptr = ft_get_by_name(variable_env, "HOME");
+	if (!ptr)
+		return (NULL);
 	result = NULL;
-	while (ptr && *ptr)
+	while (*ptr->values)
 	{
-		if (ft_strncmp(*ptr, pwd, ft_strlen(*ptr)) == 0)
+		if (ft_strncmp(*ptr->values, pwd, ft_strlen(*ptr->values)) == 0)
 			break ;
-		++ptr;
+		++ptr->values;
 	}
-	if (*ptr)
+	if (*ptr->values)
 	{
-		length = ft_strlen(pwd) - ft_strlen(*ptr) + 1;
+		length = ft_strlen(pwd) - ft_strlen(*ptr->values) + 1;
 		result = (char *)malloc((length + 1) * sizeof(*result));
 		result[0] = '~';
-		ft_memcpy((void *)(result + 1), (const void *)(pwd + ft_strlen(*ptr)), length - 1);
+		ft_memcpy((void *)(result + 1),
+			(const void *)(pwd + ft_strlen(*ptr->values)), length - 1);
 		result[length] = '\0';
 	}
 	return (result);
