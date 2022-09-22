@@ -2,7 +2,9 @@
 
 void ft_foreach(void **array, void (*func)(void *))
 {
-	while (array && *array)
+	if (!array || !func)
+		return ;
+	while (*array)
 		(*func)(*(array++));
 }
 
