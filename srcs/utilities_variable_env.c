@@ -126,7 +126,7 @@ bool	ft_convert_str_to_struct(const t_vector	*variable_env,
 	value = ft_substr(src, (size_t)(ptr - src + 1), length - (size_t)(ptr - src + 1));
 	if (i == 1)
 		value = ft_add_old_var(variable_env, &value, dst->name);
-	dst->values = ft_split(value, ':');
+	dst->values = ft_smart_split(value, ':', true);
 	ft_smart_free((void **)&value);
 	if (!dst->name || !ft_check_var_name(dst->name) || !dst->values)
 		return (false);
