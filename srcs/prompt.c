@@ -2,30 +2,29 @@
 
 static char *ft_get_smart_pwd(const t_vector	*variable_env, const char *pwd)
 {
-	t_variable_env	*ptr;
+	t_variable_env	*var;
 	char			*result;
+	char			**ptr;
 	size_t			length;
 
-	ptr = ft_get_by_name(variable_env, "HOME");
-	if (!ptr)
+	var = ft_get_by_name(variable_env, "HOME");
+	if (!var)
 		return (NULL);
-	result = NULL;
-	while (*ptr->values)
+	ptr = var->values;
+	while (*ptr)
 	{
-		if (ft_strlen(*ptr->values) == ft_strlen(pwd)
-			&& ft_strncmp(*ptr->values, pwd, ft_strlen(*ptr->values)) == 0)
+		if (ft_strncmp(*ptr, pwd, ft_strlen(*ptr)) == 0)
 			break ;
-		++ptr->values;
+		++ptr;
 	}
-	if (*ptr->values)
-	{
-		length = ft_strlen(pwd) - ft_strlen(*ptr->values) + 1;
-		result = (char *)malloc((length + 1) * sizeof(*result));
-		result[0] = '~';
-		ft_memcpy((void *)(result + 1),
-			(const void *)(pwd + ft_strlen(*ptr->values)), length - 1);
-		result[length] = '\0';
-	}
+	if (!*ptr)
+		return (NULL);
+	length = ft_strlen(pwd) - ft_strlen(*ptr) + 1;
+	result = (char *)malloc((length + 1) * sizeof(*result));
+	result[0] = '~';
+	ft_memcpy((void *)(result + 1),
+		(const void *)(pwd + ft_strlen(*ptr)), length - 1);
+	result[length] = '\0';
 	return (result);
 }
 
