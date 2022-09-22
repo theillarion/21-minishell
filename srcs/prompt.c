@@ -12,7 +12,8 @@ static char *ft_get_smart_pwd(const t_vector	*variable_env, const char *pwd)
 	result = NULL;
 	while (*ptr->values)
 	{
-		if (ft_strncmp(*ptr->values, pwd, ft_strlen(*ptr->values)) == 0)
+		if (ft_strlen(*ptr->values) == ft_strlen(pwd)
+			&& ft_strncmp(*ptr->values, pwd, ft_strlen(*ptr->values)) == 0)
 			break ;
 		++ptr->values;
 	}
