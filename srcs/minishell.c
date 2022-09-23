@@ -6,7 +6,7 @@
 /*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 23:21:32 by illarion          #+#    #+#             */
-/*   Updated: 2022/09/23 23:24:54 by illarion         ###   ########.fr       */
+/*   Updated: 2022/09/23 23:27:37 by illarion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,8 @@ void	ft_exucute_program(t_environment	*env, char **args)
 
 void	ft_main_handle(t_environment	*env)
 {
-	char **temp
+	char	**temp;
+
 	if (env->prompt.is_need_change == true)
 		ft_set_new_prompt(&env->variables_env, &env->prompt, env->info);
 	ft_smart_free((void **)&env->input_line);
