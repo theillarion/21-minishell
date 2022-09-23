@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utilities_vector.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/23 22:50:04 by illarion          #+#    #+#             */
+/*   Updated: 2022/09/23 22:50:55 by illarion         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 bool	ft_push(t_vector	*vector, const char	*string_var)
@@ -23,14 +35,15 @@ size_t	ft_find_by_name(const t_vector	*vector, const char	*name)
 		var_env = *(t_variable_env *)ft_get_element(vector, i);
 		if (var_env.name == NULL
 			|| (ft_strlen(var_env.name) == ft_strlen(name)
-			&& ft_strncmp(var_env.name, name, ft_strlen(var_env.name)) == 0))
+				&& ft_strncmp(var_env.name, name,
+					ft_strlen(var_env.name)) == 0))
 			return (i);
 		++i;
 	}
 	return (SIZE_MAX);
 }
 
-t_variable_env *ft_get_by_name(const t_vector	*vector, const char *name)
+t_variable_env	*ft_get_by_name(const t_vector	*vector, const char *name)
 {
 	void	*ptr;
 	size_t	find_index;

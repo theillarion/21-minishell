@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fill.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/23 22:59:16 by illarion          #+#    #+#             */
+/*   Updated: 2022/09/23 23:00:09 by illarion         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static void	ft_fill_variables_env(t_vector	*vector, char	**envp)
@@ -5,7 +17,7 @@ static void	ft_fill_variables_env(t_vector	*vector, char	**envp)
 	size_t	i;
 
 	if (vector == NULL || envp == NULL)
-		return;
+		return ;
 	i = 0;
 	while (envp[i] != NULL)
 		++i;
@@ -22,16 +34,17 @@ static void	ft_fill_variables_env(t_vector	*vector, char	**envp)
 	}
 }
 
-static void ft_push_function(t_vector *src, char *name, int (*func)(t_environment *, const char *const *))
+static void	ft_push_function(t_vector *src, char *name,
+				int (*func)(t_environment *, const char *const *))
 {
-	t_function result;
+	t_function	result;
 
 	result.name = name;
 	result.func = func;
 	ft_push_back(src, (void *)&result);
 }
 
-static void ft_fill_functions(t_vector	*functions)
+static void	ft_fill_functions(t_vector	*functions)
 {
 	ft_reserve(functions, COUNT_FUNCTIONS);
 	ft_push_function(functions, "cd", &ft_command_cd);

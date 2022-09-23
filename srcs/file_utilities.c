@@ -1,8 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   file_utilities.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/23 23:03:34 by illarion          #+#    #+#             */
+/*   Updated: 2022/09/23 23:04:22 by illarion         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-bool ft_is_regular_file(char const *path)
+//	may be unused
+bool	ft_is_regular_file(char const *path)
 {
-	struct stat buff;
+	struct stat	buff;
 
 	if (stat(path, &buff) == 0 && S_ISREG(buff.st_mode))
 		return (true);
@@ -10,7 +23,8 @@ bool ft_is_regular_file(char const *path)
 		return (false);
 }
 
-bool ft_is_exist(char const *path)
+//	may be unused
+bool	ft_is_exist(char const *path)
 {
 	if (access(path, X_OK) == 0)
 		return (true);
@@ -18,7 +32,7 @@ bool ft_is_exist(char const *path)
 		return (false);
 }
 
-static char *ft_get_directory(const char *path, const char *name)
+static char	*ft_get_directory(const char *path, const char *name)
 {
 	char	*result;
 	char	*backup;
@@ -35,6 +49,7 @@ static char *ft_get_directory(const char *path, const char *name)
 	return (result);
 }
 
+//	may be unused
 bool	ft_which(const char *const *paths, const char *name, char **dst)
 {
 	char	*buff;
@@ -45,7 +60,7 @@ bool	ft_which(const char *const *paths, const char *name, char **dst)
 	{
 		buff = ft_get_directory(*paths, name);
 		if (ft_is_exist(buff) && ft_is_regular_file(buff))
-			break;
+			break ;
 		ft_smart_free((void **)&buff);
 		++paths;
 	}

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   commands_2.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/23 22:52:10 by illarion          #+#    #+#             */
+/*   Updated: 2022/09/23 22:52:47 by illarion         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	ft_command_exit(t_environment	*env, const char *const *args)
@@ -53,9 +65,10 @@ int	ft_command_echo(t_environment	*env, const char *const *args)
 
 	(void)env;
 	is_need_newline = true;
-	if (args && *args && ft_strlen(*args) == 2 && ft_strncmp(*args, "-n", 2) == 0)
+	if (args && *args && ft_strlen(*args) == 2
+		&& ft_strncmp(*args, "-n", 2) == 0)
 	{
-		is_need_newline  = false;
+		is_need_newline = false;
 		++args;
 	}
 	while (args && *args)
