@@ -25,8 +25,8 @@ LINK_LIB	=	-lreadline -l$(LIB_NAME_S) -L$(LIB_PATH) -l$(LIB_V_NAME_S) -L$(LIB_V_
 LINK_LIB_D	=	-lreadline -l$(LIB_NAME_S_D) -L$(LIB_PATH) -l$(LIB_V_NAME_S_D) -L$(LIB_V_PATH)
 
 SRCS		=	$(addprefix srcs/,\
-				signal.c prompt.c commands_utilities.c utilities.c utilities_vector.c utilities_readline.c commands.c commands_2.c\
-				exit.c destroy.c utilities_variable_env.c fill.c init.c file_utilities.c print.c minishell.c)
+				signal.c prompt.c commands_utilities.c utilities.c utilities_vector.c commands.c commands_2.c\
+				exit.c destroy.c utilities_variable_env.c utilities_variable_env_2.c fill.c init.c file_utilities.c print.c minishell.c)
 HEADERS		=	includes/minishell.h
 
 OBJS		=	${SRCS:%.c=%.o}
@@ -100,8 +100,9 @@ re			:	fclean all
 				@printf "ready $(COLOR_LYELLOW)$(NAME)$(NOCOLOR) for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
 norm		:
-				@norminette $(SRCS) $(HEADERS)
 				@$(MAKE) norm -s -C $(LIB_PATH)
+				@$(MAKE) norm -s -C $(LIB_V_PATH)
+				@norminette $(SRCS) $(HEADERS)
 				@printf "$(COLOR_LCYAN)norminette$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
