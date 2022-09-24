@@ -75,6 +75,7 @@ typedef struct s_redir
 {
 	int		r_type;
 	t_token	*arg;
+	int 	here_doc_fd;
 }	t_redir;
 
 typedef struct s_environment
@@ -166,6 +167,7 @@ bool			ft_convert_token_vector_to_str_array(char ***dst,
 //		in_out_files.c
 void			input_file_fd(t_redir *token);
 void			output_file_fd(t_redir *tokens);
+void			here_doc_child(t_redir *token);
 
 //		ft_isspace.c
 int				ft_isspace(int c);
@@ -180,7 +182,8 @@ void			exit_find_failure(char **in_argv, char *access_denied_path);
 char			*get_next_line(int fd);
 
 //		here_doc.c
-void			here_doc(t_redir *token, int pipe_fd[2]);
+void			here_doc(t_redir *token);
+void			read_heredocs(t_environment *env);
 
 //		lexer.c
 void			lexer(t_environment *env);
