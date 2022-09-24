@@ -144,9 +144,9 @@ bool			ft_which(const char *const *paths, const char *name,
 					char **dst);
 
 //				print
-void			ft_print_error(const t_environment	*env, const char *command,
+int				ft_print_error(const t_environment	*env, const char *command,
 					const char *msg);
-void			ft_print_errno(t_environment	*env, const char *command);
+int				ft_print_errno(t_environment	*env, const char *command);
 
 //				main.c
 int				main(int argc, char	**argv, char	**envp);
