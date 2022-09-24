@@ -31,7 +31,10 @@ void	ft_main_handle(t_environment	*env)
 		ft_init_vector(&env->tokens, sizeof(t_token), NULL);
 		lexer(env);
 		if (parser(env) == 0)
+		{
+			read_heredocs(env);
 			execute(env);
+		}
 	}
 	if (env->is_need_update_envp)
 	{
@@ -55,7 +58,6 @@ int	main(int argc, char **argv, char **envp)
 		ft_exit_with_message(&env, COMMON_ERROR, NULL, "filling error");
 	while (true)
     {
-
         signal(SIGINT, ft_handle_signal);
         signal(SIGQUIT, SIG_IGN);
         ft_main_handle(&env);

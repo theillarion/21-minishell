@@ -24,7 +24,7 @@ void	ft_exec_command(t_environment *env, t_command *cmd, int is_child)
 	}
 }
 
-void	serve_redirects(size_t i, int pipe_fd[2][2], t_command *cmd)
+void	serve_redirects(t_command *cmd)
 {
 	t_redir		*redir;
 	size_t		r;
@@ -36,7 +36,7 @@ void	serve_redirects(size_t i, int pipe_fd[2][2], t_command *cmd)
 		if (redir->r_type == t_r_in)
 			input_file_fd(redir);
 		if (redir->r_type == t_hd)
-			here_doc(redir, pipe_fd[i % 2]);
+			here_doc_child(redir);
 		if (redir->r_type == t_r_out || redir->r_type == t_r_outa)
 			output_file_fd(redir);
 	}
@@ -61,7 +61,7 @@ void	proc_prep(t_environment *env, size_t i, int pipe_fd[2][2], int is_chld)
 		if (close(pipe_fd[i % 2][1]) == -1)
 			ft_raise_error("close error\n");
 	}
-	serve_redirects(i, pipe_fd, cur_cmd);
+	serve_redirects(cur_cmd);
 	ft_exec_command(env, cur_cmd, is_chld);
 }
 
