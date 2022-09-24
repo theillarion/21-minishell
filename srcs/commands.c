@@ -14,21 +14,24 @@
 
 int	ft_command_cd(t_environment	*env, const char *const *args)
 {
-	char	*arg;
+	char	**arg;
 
 	if (!env || !args)
 		return (SUCCESS);
-	arg = (char *)*args;
-	if (!arg || (*arg == '~' && *(arg + 1) == '\0'))
-		arg = *(ft_get_by_name(&env->variables_env, "HOME")->values);
-	if (ft_strlen(arg) == ft_strlen(env->info.pwd)
-		&& ft_strncmp(arg, env->info.pwd, ft_strlen(arg)) == 0)
-		return (SUCCESS);
-	if (chdir(arg) == -1)
+	arg = (char **)args;
+	if (!arg || !*arg || (**arg == '~' && *((*arg) + 1) == '\0'))
 	{
-		ft_print_errno(env, "chdir");
-		return (COMMON_ERROR);
+		if (ft_find_by_name(&env->variables_env, "HOME") == SIZE_MAX)
+			return (ft_print_error(env, "cd", "HOME not set"));
+		arg = ft_get_by_name(&env->variables_env, "HOME")->values;
+		if (*arg && *(arg + 1))
+			return (ft_print_error(env, "cd", "No such file or directory"));
 	}
+	if (ft_strlen(*arg) == ft_strlen(env->info.pwd)
+		&& ft_strncmp(*arg, env->info.pwd, ft_strlen(*arg)) == 0)
+		return (SUCCESS);
+	if (chdir(*arg) == -1)
+		return (ft_print_errno(env, "chdir"));
 	else
 	{
 		ft_smart_free((void **)&env->info.pwd);
