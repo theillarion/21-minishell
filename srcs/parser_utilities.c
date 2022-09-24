@@ -123,9 +123,9 @@ int	expand_word(t_environment *env, char **start, int *size)
 	current_string = ft_substr(*start, 0, *size);
 	if (!current_string)
 		return (1);
-	i = -1;
+	i = 0;
 	err = 0;
-	while (current_string && current_string[++i])
+	while (current_string && current_string[i])
 	{
 		if (current_string[i] == '\'')
 		{
@@ -143,6 +143,8 @@ int	expand_word(t_environment *env, char **start, int *size)
 		}
 		if (current_string[i] == '$')
 			current_string = str_expanding(current_string, &i, env);
+		else
+			i++;
 	}
 	*start = current_string;
 	if (current_string)
