@@ -34,11 +34,11 @@ void	serve_redirects(size_t i, int pipe_fd[2][2], t_command *cmd)
 	{
 		redir = (t_redir *)ft_get_element(&cmd->redirs, r);
 		if (redir->r_type == t_r_in)
-			input_file_fd(redir, pipe_fd[i % 2]);
+			input_file_fd(redir);
 		if (redir->r_type == t_hd)
 			here_doc(redir, pipe_fd[i % 2]);
 		if (redir->r_type == t_r_out || redir->r_type == t_r_outa)
-			output_file_fd(redir, pipe_fd[i % 2]);
+			output_file_fd(redir);
 	}
 }
 
@@ -51,11 +51,15 @@ void	proc_prep(t_environment *env, size_t i, int pipe_fd[2][2], int is_chld)
 	{
 		if (dup2(pipe_fd[!(i % 2)][0], 0) == -1)
 			ft_raise_error("dup2 error\n");
+		if (close(pipe_fd[!(i % 2)][0]) == -1)
+			ft_raise_error("close error\n");
 	}
 	if ((i + 1 != ft_size(&env->groups)))
 	{
 		if (dup2(pipe_fd[i % 2][1], 1) == -1)
 			ft_raise_error("dup2 error\n");
+		if (close(pipe_fd[i % 2][1]) == -1)
+			ft_raise_error("close error\n");
 	}
 	serve_redirects(i, pipe_fd, cur_cmd);
 	ft_exec_command(env, cur_cmd, is_chld);

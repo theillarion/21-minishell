@@ -164,8 +164,8 @@ bool			ft_convert_token_vector_to_str_array(char ***dst,
 					const t_vector *src);
 
 //		in_out_files.c
-void			input_file_fd(t_redir *token, int pipe_fd[2]);
-void			output_file_fd(t_redir *token, int pipe_fd[2]);
+void			input_file_fd(t_redir *token);
+void			output_file_fd(t_redir *tokens);
 
 //		ft_isspace.c
 int				ft_isspace(int c);
