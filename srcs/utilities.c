@@ -1,15 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utilities.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/23 22:49:06 by illarion          #+#    #+#             */
+/*   Updated: 2022/09/23 22:49:55 by illarion         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-void ft_foreach(void **array, void (*func)(void *))
+void	ft_foreach(void **array, void (*func)(void *))
 {
-	while (array && *array)
+	if (!array || !func)
+		return ;
+	while (*array)
 		(*func)(*(array++));
 }
 
 void	ft_smart_free(void	**address)
 {
 	if (address == NULL || *address == NULL)
-		return;
+		return ;
 	free(*address);
 	*address = NULL;
 }
@@ -26,7 +40,7 @@ void	ft_smart_double_free(void	***address)
 int	ft_smart_atoi(const char	*src, bool	*is_error)
 {
 	int	sign;
-	int number;
+	int	number;
 
 	number = 0;
 	sign = 1;

@@ -1,37 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utilities_variable_env.c                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/23 22:53:28 by illarion          #+#    #+#             */
+/*   Updated: 2022/09/23 22:57:09 by illarion         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-static bool	ft_check_var_name(const char	*str)
-{
-	if (str == NULL || ft_isdigit(*str) == 1)
-		return (false);
-	return (true);
-}
-
-bool	ft_convert_str_to_struct(t_variable_env	*dst, const char	*src)
-{
-	char	*ptr;
-	char	*value;
-	size_t	length;
-
-	length = ft_strlen(src);
-	ptr = ft_strnstr(src, "=", length);
-	if (ptr == NULL || ptr == src)
-		return (false);
-	dst->name = ft_substr(src, 0, (size_t)((ptr - src) / sizeof(*src)));
-	value = ft_substr(src, (size_t)(ptr - src + 1), length - (size_t)(ptr - src + 1));
-	if (dst->name == NULL || ft_check_var_name(dst->name) == false || value == NULL)
-	{
-		ft_smart_free((void **)&value);
-		return (false);
-	}
-	dst->values = ft_split(value, ':');
-	ft_smart_free((void **)&value);
-	if (dst->values == NULL)
-		return (false);
-	return (true);
-}
-
-static size_t ft_calc_length(const t_variable_env	*var_env)
+static size_t	ft_calc_length(const t_variable_env	*var_env)
 {
 	size_t	result;
 	char	**ptr;
@@ -48,7 +29,7 @@ static size_t ft_calc_length(const t_variable_env	*var_env)
 	return (result);
 }
 
-static char	*ft_get_str(const t_variable_env	*var_env)
+char	*ft_get_str(const t_variable_env	*var_env)
 {
 	char	*result;
 	char	**ptr;
@@ -99,10 +80,10 @@ bool	ft_convert_vector_to_array(char	***dst,	const t_vector	*src)
 
 bool	ft_convert_token_vector_to_str_array(char	***dst,	const t_vector	*src)
 {
-	char			*str;
-	size_t			i;
-	t_token 		*token;
-	int 			j;
+	char	*str;
+	size_t	i;
+	t_token	*token;
+	int		j;
 
 	if (dst == NULL)
 		return (false);
@@ -123,7 +104,6 @@ bool	ft_convert_token_vector_to_str_array(char	***dst,	const t_vector	*src)
 			i++;
 			token = (t_token *)ft_get_element(src, i);
 		}
-
 		if (str == NULL)
 			return (false);
 		(*dst)[j] = str;

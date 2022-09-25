@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/23 23:10:17 by illarion          #+#    #+#             */
+/*   Updated: 2022/09/23 23:15:35 by illarion         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -107,121 +119,124 @@ typedef struct s_command
 	pid_t		pid;
 }				t_cmd;
 
-void			ft_push(t_vector	*vector, const char	*string_var);
+bool			ft_push(t_vector        *vector, const char     *string_var);
 size_t			ft_find_by_name(const t_vector	*vector, const char	*name);
 t_variable_env	*ft_get_by_name(const t_vector	*vector, const char *name);
 
-//		prompt.c
+//				prompt.c
 void			ft_set_new_prompt(const t_vector *variable_env,
 					t_prompt *prompt, t_info info);
 
-//		fill.c
+//				fill.c
 bool			ft_fill(t_environment	*env, char	**envp,
 					const char	*name_shell);
 
-//		init.c
+//				init.c
 void			ft_init(t_environment	*env);
 
-//		commands_utilities.c
+//				commands_utilities.c
 char			*ft_get_pwd(void);
 
-//		commands.c
+//				commands.c
 int				ft_command_cd(t_environment *env, const char *const *args);
 int				ft_command_pwd(t_environment	*env, const char *const *args);
 int				ft_command_env(t_environment	*env, const char *const *args);
 int				ft_command_unset(t_environment	*env, const char *const *args);
 
-//		commands_2.c
-int				ft_command_exit(t_environment *env, const char *const *args);
+//				utilities_readline.c
+void			ft_readline_insert(const char	*str);
+
+//				commands_2.c
+int				ft_command_exit(t_environment	*env, const char *const *args);
 int				ft_command_export(t_environment	*env, const char *const *args);
 int				ft_command_echo(t_environment	*env, const char *const *args);
 
-//		utilities_readline.c
-void			ft_readline_insert(const char	*str);
-
-//		utilities.c
+//				utilities.c
 void			ft_foreach(void **array, void (*func)(void *));
 void			ft_smart_free(void	**address);
 void			ft_smart_double_free(void	***address);
 int				ft_smart_atoi(const char	*src, bool	*is_error);
 size_t			ft_size_array(void	**address);
 
-//		signal.c
+//				signal.c
 void			ft_handle_signal(int signal);
 void			ft_handle_signal_child(int signal);
 
-//		destroy.c
+//				destroy.c
 void			ft_destroy(t_environment	*env);
 
-//		exit.c
+//				exit.c
 int				ft_exit(t_environment	*env, int status);
 void			ft_exit_with_message(t_environment	*env, int status,
 					const char	*command, const char	*msg);
 
-//		variable_env.c
-bool			ft_convert_str_to_struct(t_variable_env	*dst, const char *src);
-bool			ft_convert_vector_to_array(char	***dst,	const t_vector	*src);
-bool			ft_convert_token_vector_to_str_array(char ***dst,
-					const t_vector *src);
-
-//		in_out_files.c
+//				redirections_utils.c
 void			input_file_fd(t_redir *token);
 void			output_file_fd(t_redir *tokens);
 void			here_doc_child(t_redir *token);
 
-//		ft_isspace.c
+//				ft_isspace.c
 int				ft_isspace(int c);
 
-//		ft_errors_managment.c
+//				ft_errors_managment.c
 void			cmd_not_found(char *const *in_argv);
 int				ft_raise_error(char *strarg);
 int				ft_raise_perror(char *strarg, int free_arg);
 void			exit_find_failure(char **in_argv, char *access_denied_path);
 
-//		here_doc.c
+//				here_doc.c
 void			here_doc(t_redir *token);
 void			read_heredocs(t_environment *env);
 
-//		lexer.c
+//				lexer.c
 void			lexer(t_environment *env);
 
-//		parser_utilities_vars.c
+//				parser_utilities_vars.c
 char			*ft_strjoin_with_free(char *str1, char *str2, int free_1,
 					int free_2);
 char			*get_v(const char *string, int *i, const t_environment *env,
 					int beg);
-//		parser_utilities_syntax.c
+//				parser_utilities_syntax.c
 int				ft_syntax_error(t_environment *env);
 int				check_syntax_token(t_environment *env, size_t i);
 
-//		parser_utilities.c
+//				parser_utilities.c
 int				expand_word(t_environment *env, char **start, int *size);
 
-//		parser.c
+//				parser.c
 int				parser(t_environment *env);
 
-//		paths_utilities.c
+//				paths_utilities.c
 void			free_command_args(char **args);
 
-//		executor_utilities.c
+//				executor_utilities.c
 void			postactions(t_environment *env);
 void			find_cmd_in_path(char **args, char **envp);
 
-//		executor.c
+//				executor.c
 int				executor(t_environment *env);
 
-//		file_utilities.c
+//				utilities_variable_env.c
+char			*ft_get_str(const t_variable_env	*var_env);
+bool			ft_convert_vector_to_array(char	***dst,	const t_vector	*src);
+bool			ft_convert_token_vector_to_str_array(char	***dst,	const t_vector	*src);
+
+//				utilities_variable_env_2.c
+bool			ft_convert_str_to_struct(const t_vector	*variable_env,
+					t_variable_env	*dst, const char	*src);
+
+//				file_utilities.c
 bool			ft_is_regular_file(char const *path);
 bool			ft_is_exist(char const *path);
 bool			ft_which(const char *const *paths, const char *name,
 					char **dst);
 
-//		print
-void			ft_print_error(const t_environment	*env, const char *command,
+//				print
+int				ft_print_error(const t_environment	*env, const char *command,
 					const char *msg);
-void			ft_print_errno(t_environment	*env, const char *command);
+int				ft_print_errno(t_environment	*env, const char *command);
 
-//		main.c
-int				main(int argc, char **argv, char **envp);
+//				main.c
+int				main(int argc, char	**argv, char	**envp);
 
 #endif

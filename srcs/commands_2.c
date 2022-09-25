@@ -1,4 +1,16 @@
-#include "../includes/minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   commands_2.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/23 22:52:10 by illarion          #+#    #+#             */
+/*   Updated: 2022/09/23 22:52:47 by illarion         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
 
 int	ft_command_exit(t_environment	*env, const char *const *args)
 {
@@ -32,7 +44,7 @@ int	ft_command_export(t_environment	*env, const char *const *args)
 		return (ft_command_env(env, args));
 	while (*args)
 	{
-		if (ft_convert_str_to_struct(&var_env, *args))
+		if (ft_convert_str_to_struct(&env->variables_env, &var_env, *args))
 		{
 			index = ft_find_by_name(&env->variables_env, var_env.name);
 			if (index < ft_size(&env->variables_env))
@@ -40,6 +52,8 @@ int	ft_command_export(t_environment	*env, const char *const *args)
 			ft_push_back(&env->variables_env, (void *)&var_env);
 			env->is_need_update_envp = true;
 		}
+		else
+			ft_print_error(env, "export", "invalid identifier");
 		++args;
 	}
 	return (SUCCESS);
@@ -51,9 +65,10 @@ int	ft_command_echo(t_environment	*env, const char *const *args)
 
 	(void)env;
 	is_need_newline = true;
-	if (args && *args && ft_strlen(*args) == 2 && ft_strncmp(*args, "-n", 2) == 0)
+	if (args && *args && ft_strlen(*args) == 2
+		&& ft_strncmp(*args, "-n", 2) == 0)
 	{
-		is_need_newline  = false;
+		is_need_newline = false;
 		++args;
 	}
 	while (args && *args)

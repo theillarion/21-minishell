@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/23 23:21:32 by illarion          #+#    #+#             */
+/*   Updated: 2022/09/23 23:27:37 by illarion         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static void	execute(t_environment	*env)
@@ -44,6 +56,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_environment	env;
 
+	rl_catch_signals = 0;
 	(void)argc;
 	(void)argv;
 	rl_catch_signals = 0;
@@ -51,10 +64,10 @@ int	main(int argc, char **argv, char **envp)
 	if (ft_fill(&env, envp, "\033[92mminishell\033[0m") == false)
 		ft_exit_with_message(&env, COMMON_ERROR, NULL, "filling error");
 	while (true)
-    {
-        signal(SIGINT, ft_handle_signal);
-        signal(SIGQUIT, SIG_IGN);
-        ft_main_handle(&env);
-    }
+	{
+		signal(SIGINT, ft_handle_signal);
+		signal(SIGQUIT, SIG_IGN);
+		ft_main_handle(&env);
+	}
 	return (0);
 }

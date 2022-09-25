@@ -25,8 +25,8 @@ LINK_LIB	=	-lreadline -l$(LIB_NAME_S) -L$(LIB_PATH) -l$(LIB_V_NAME_S) -L$(LIB_V_
 LINK_LIB_D	=	-lreadline -l$(LIB_NAME_S_D) -L$(LIB_PATH) -l$(LIB_V_NAME_S_D) -L$(LIB_V_PATH)
 
 SRCS		=	$(addprefix srcs/,\
-				signal.c prompt.c commands_utilities.c utilities.c utilities_vector.c utilities_readline.c commands.c commands_2.c \
-				exit.c destroy.c utilities_variable_env.c fill.c init.c file_utilities.c print.c minishell.c \
+				signal.c prompt.c commands_utilities.c utilities.c utilities_vector.c commands.c commands_2.c \
+				exit.c destroy.c utilities_variable_env.c utilities_variable_env_2.c fill.c init.c file_utilities.c print.c minishell.c \
 				lexer.c lexer_utilities.c redirections_utils.c ft_errors_managment.c here_doc.c \
 				parser.c parser_utilities.c parser_utilities_vars.c parser_utilities_syntax.c executor.c \
 				executor_utilities.c path_utilities.c  )
@@ -54,7 +54,7 @@ NEWLINE			=	\n
 
 %_debug.o	:	%.c $(HEADERS)
 				@$(CC) ${INCLUDES} $(FLAGS_D) $(FLAGS) -DDEBUG_MODE -c $< -o $@
-				@printf "$(COLOR_LCYAN)build object$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
+				@printf "$(COLOR_LCYAN)build debug object$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready $(COLOR_LYELLOW)$@$(NOCOLOR)$(NEWLINE)"
 
 .phony		:	all debug clean fclean re norm
@@ -65,12 +65,12 @@ debug		:	${NAME_D}
 
 $(NAME)		:	$(LIB) $(LIB_V) $(OBJS)
 				@$(CC) $(OBJS) $(LINK_LIB) -o $(NAME)
-				@printf "$(COLOR_LCYAN)link$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
+				@printf "$(COLOR_LCYAN)linking objects$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready $(COLOR_LYELLOW)$(NAME)$(NOCOLOR) for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
 $(NAME_D)	:	$(LIB_D) $(LIB_V_D) $(OBJS_D)
 				@$(CC) $(OBJS_D) $(LINK_LIB_D) -o $(NAME_D)
-				@printf "$(COLOR_LCYAN)link debug$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
+				@printf "$(COLOR_LCYAN)linking debug objects$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready $(COLOR_LYELLOW)$(NAME_D)$(NOCOLOR) for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
 $(LIB)		:	
@@ -96,16 +96,17 @@ fclean		:	clean
 				@$(RM) $(NAME) $(NAME_D)
 				@$(MAKE) fclean -s -C $(LIB_PATH)
 				@$(MAKE) fclean -s -C $(LIB_V_PATH)
-				@printf "$(COLOR_LCYAN)$@$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
+				@printf "$(COLOR_LCYAN)full clean$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready $(COLOR_LYELLOW)$(NAME)$(NOCOLOR) for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
 re			:	fclean all
-				@printf "$(COLOR_LCYAN)$@$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
+				@printf "$(COLOR_LCYAN)rebuild all$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready $(COLOR_LYELLOW)$(NAME)$(NOCOLOR) for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
 norm		:
-				@norminette $(SRCS) $(HEADERS)
 				@$(MAKE) norm -s -C $(LIB_PATH)
+				@$(MAKE) norm -s -C $(LIB_V_PATH)
+				@norminette $(SRCS) $(HEADERS)
 				@printf "$(COLOR_LCYAN)norminette$(NOCOLOR) [$(COLOR_LGREEN)info$(NOCOLOR)]: "
 				@printf "ready for $(COLOR_LYELLOW)$(OS)$(NOCOLOR)$(NEWLINE)"
 
