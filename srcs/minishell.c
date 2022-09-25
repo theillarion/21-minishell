@@ -20,6 +20,8 @@ static void	ft_execute_external(t_environment	*env, char **args)
 	char	*program;
 	int		status;
 
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	if (ft_which((t_double_ptr)ft_get_by_name(&env->variables_env, "PATH")
 			->values, *args, &program))
 		status = execve(program, args, env->envp);
@@ -36,8 +38,8 @@ static void	ft_fork(t_environment	*env, char **args)
 	pid_t	pid;
 	int		status;
 
-	signal(SIGINT, ft_handle_signal_child);
-	signal(SIGQUIT, ft_handle_signal_child);
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	pid = fork();
 	if (pid < 0)
 		ft_print_errno(env, "fork");
@@ -52,6 +54,13 @@ static void	ft_fork(t_environment	*env, char **args)
 		}
 		else if (WIFEXITED(status) != 0)
 			env->last_code = WEXITSTATUS(status);
+		if (WIFSIGNALED(status) != 0)
+		{
+			if (WTERMSIG(status) == SIGINT)
+				printf("\n");
+			else if (WTERMSIG(status) == SIGQUIT)
+				printf("Quit: 3\n");
+		}
 	}
 }
 
