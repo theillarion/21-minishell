@@ -20,11 +20,12 @@ int	add_redirect(t_vector *redirs, t_token *token, t_vector *tokens, size_t *i)
 	return (1);
 }
 
-void	find_builtin(const t_environment *env, t_cmd *cmd, t_token *token)
+void	find_builtin(const t_environment *env, t_command *cmd, t_token *token)
 {
 	size_t		bi;
 	char		*token_string;
 
+	(*cmd).builtin = NULL;
 	if (!token->size)
 		return ;
 	token_string = ft_substr(token->start, 0, token->size);
@@ -34,7 +35,7 @@ void	find_builtin(const t_environment *env, t_cmd *cmd, t_token *token)
 	free(token_string);
 }
 
-void	add_cmd_and_args(t_environment *env, t_cmd *cmd, t_token *tkn, int *ca)
+void	process_word(t_environment *env, t_command *cmd, t_token *tkn, int *ca)
 {
 	if (tkn->type == t_word || tkn->type == t_sep)
 	{
@@ -50,11 +51,10 @@ void	add_cmd_and_args(t_environment *env, t_cmd *cmd, t_token *tkn, int *ca)
 
 int	get_command(t_environment *env, size_t *i)
 {
-	t_cmd	cmd;
-	t_token	*cur_token;
-	int		command_added;
+	t_command	cmd;
+	t_token		*cur_token;
+	int			command_added;
 
-	cmd.builtin = NULL;
 	ft_init_vector(&cmd.redirs, sizeof(t_redir), NULL);
 	ft_init_vector(&cmd.args, sizeof(t_token), NULL);
 	command_added = 0;
@@ -66,7 +66,7 @@ int	get_command(t_environment *env, size_t *i)
 		if (cur_token->type == t_pipe)
 			break ;
 		add_redirect(&cmd.redirs, cur_token, &env->tokens, i);
-		add_cmd_and_args(env, &cmd, cur_token, &command_added);
+		process_word(env, &cmd, cur_token, &command_added);
 		(*i)++;
 	}
 	ft_push_back(&env->groups, (void *)&cmd);
@@ -77,7 +77,7 @@ int	parser(t_environment *env)
 {
 	size_t		i;
 
-	ft_init_vector(&env->groups, sizeof(t_cmd), NULL);
+	ft_init_vector(&env->groups, sizeof(t_command), NULL);
 	i = -1;
 	while (++i < ft_size(&env->tokens))
 	{

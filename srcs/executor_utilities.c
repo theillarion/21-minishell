@@ -13,11 +13,20 @@ void	free_command_args(char **args)
 	free(args);
 }
 
-void	free_tokens(const t_environment *env)
+void	ft_free_groups(t_environment *env)
 {
-	size_t	i;
-	t_token	*token;
+	size_t		i;
+	t_command	*current;
+	t_token		*token;
 
+	i = -1;
+	while (++i < ft_size(&env->groups))
+	{
+		current = ft_get_element(&env->groups, i);
+		ft_erase_all(&current->args);
+		ft_erase_all(&current->redirs);
+	}
+	ft_erase_all(&env->groups);
 	i = -1;
 	while (++i < ft_size(&env->tokens))
 	{
@@ -32,26 +41,10 @@ void	free_tokens(const t_environment *env)
 				i++;
 		}
 	}
-}
-
-void	ft_free_cmd_vectors(t_environment *env)
-{
-	size_t		i;
-	t_cmd	*current;
-
-	i = -1;
-	while (++i < ft_size(&env->groups))
-	{
-		current = ft_get_element(&env->groups, i);
-		ft_erase_all(&current->args);
-		ft_erase_all(&current->redirs);
-	}
-	ft_erase_all(&env->groups);
-	free_tokens(env);
 	ft_erase_all(&env->tokens);
 }
 
 void	postactions(t_environment *env)
 {
-	ft_free_cmd_vectors(env);
+	ft_free_groups(env);
 }

@@ -17,7 +17,9 @@
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <errno.h>
+//# include <linux/limits.h>
 # include <fcntl.h>
+# include "get_next_line.h"
 
 # ifndef PATH_MAX
 #  define PATH_MAX 1024
@@ -73,7 +75,7 @@ typedef struct s_redir
 {
 	int		r_type;
 	t_token	*arg;
-	int		here_doc_fd;
+	int 	here_doc_fd;
 }	t_redir;
 
 typedef struct s_environment
@@ -103,9 +105,7 @@ typedef struct s_command
 	t_vector	args;
 	t_vector	redirs;
 	t_function	*builtin;
-	int			status;
-	pid_t		pid;
-}				t_cmd;
+}				t_command;
 
 void			ft_push(t_vector	*vector, const char	*string_var);
 size_t			ft_find_by_name(const t_vector	*vector, const char	*name);
@@ -177,6 +177,9 @@ void			cmd_not_found(char *const *in_argv);
 int				ft_raise_error(char *strarg);
 int				ft_raise_perror(char *strarg, int free_arg);
 void			exit_find_failure(char **in_argv, char *access_denied_path);
+
+//		get_next_line.c
+char			*get_next_line(int fd);
 
 //		here_doc.c
 void			here_doc(t_redir *token);

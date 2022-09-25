@@ -74,7 +74,7 @@ char	*str_expanding(char *current_string, int *i, t_environment *env)
 	{
 		free(firstpart);
 		free(lastpart);
-		return (ft_strdup(""));
+		return (NULL);
 	}
 	result = ft_strjoin_with_free(firstpart, var_value, 1, 1);
 	result = ft_strjoin_with_free(result, lastpart, 1, 1);
