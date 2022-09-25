@@ -1,10 +1,5 @@
 #include "minishell.h"
-#include <sys/ioctl.h>
 
-static int event(void)
-{
-	return (0);
-}
 static void	execute(t_environment	*env)
 {
 	int		status;
@@ -12,9 +7,9 @@ static void	execute(t_environment	*env)
 	signal(SIGINT, ft_handle_signal_child);
 	signal(SIGQUIT, ft_handle_signal_child);
 	status = executor(env);
+	postactions(env);
 	if (WIFEXITED(status) != 0)
 		env->last_code = WEXITSTATUS(status);
-	postactions(env);
 }
 
 void	ft_main_handle(t_environment	*env)
@@ -52,7 +47,6 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	rl_catch_signals = 0;
-	rl_event_hook = event;
 	ft_init(&env);
 	if (ft_fill(&env, envp, "\033[92mminishell\033[0m") == false)
 		ft_exit_with_message(&env, COMMON_ERROR, NULL, "filling error");

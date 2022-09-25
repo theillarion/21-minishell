@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	ft_exec_command(t_environment *env, t_command *cmd, int is_child)
+void	ft_exec_command(t_environment *env, t_cmd *cmd, int is_child)
 {
 	char	*command;
 	char	**envp;
@@ -11,7 +11,7 @@ void	ft_exec_command(t_environment *env, t_command *cmd, int is_child)
 	{
 		if (is_child)
 			exit(cmd->builtin->func(env, (const char *const *)(args + 1)));
-		cmd->builtin->func(env, (const char *const *)(args + 1));
+		cmd->status = cmd->builtin->func(env, (const char *const *)(args + 1));
 		free_command_args(args);
 	}
 	else
@@ -24,7 +24,7 @@ void	ft_exec_command(t_environment *env, t_command *cmd, int is_child)
 	}
 }
 
-void	serve_redirects(t_command *cmd)
+void	serve_redirects(t_cmd *cmd)
 {
 	t_redir		*redir;
 	size_t		r;
@@ -42,39 +42,68 @@ void	serve_redirects(t_command *cmd)
 	}
 }
 
-void	proc_prep(t_environment *env, size_t i, int pipe_fd[2][2], int is_chld)
+void	proc_prep(t_environment *env, size_t ind, int pipe_fd[2][2], int is_chd)
 {
-	t_command	*cur_cmd;
+	t_cmd	*cur_cmd;
 
-	cur_cmd = (t_command *) ft_get_element(&env->groups, i);
-	if (i != 0)
+	cur_cmd = (t_cmd *) ft_get_element(&env->groups, ind);
+	if (ind != 0)
 	{
-		if (dup2(pipe_fd[!(i % 2)][0], 0) == -1)
+		if (dup2(pipe_fd[!(ind % 2)][0], 0) == -1)
 			ft_raise_error("dup2 error\n");
-		if (close(pipe_fd[!(i % 2)][0]) == -1)
+		if (close(pipe_fd[!(ind % 2)][0]) == -1)
 			ft_raise_error("close error\n");
 	}
-	if ((i + 1 != ft_size(&env->groups)))
+	if ((ind + 1 != ft_size(&env->groups)))
 	{
-		if (dup2(pipe_fd[i % 2][1], 1) == -1)
+		if (dup2(pipe_fd[ind % 2][1], 1) == -1)
 			ft_raise_error("dup2 error\n");
-		if (close(pipe_fd[i % 2][1]) == -1)
+		if (close(pipe_fd[ind % 2][1]) == -1)
 			ft_raise_error("close error\n");
 	}
 	serve_redirects(cur_cmd);
-	ft_exec_command(env, cur_cmd, is_chld);
+	ft_exec_command(env, cur_cmd, is_chd);
+}
+
+void	wait_write_statuses(const t_environment *env)
+{
+	size_t		current;
+	int			status;
+	pid_t		pid;
+	size_t		current_i;
+	t_cmd		*cu_cmd;
+
+	current = -1;
+	while (++current < ft_size(&env->groups))
+	{
+		pid = waitpid(-1, &status, WUNTRACED);
+		current_i = -1;
+		while (++current_i < ft_size(&env->groups))
+		{
+			cu_cmd = ft_get_element(&env->groups, current_i);
+			if (cu_cmd && cu_cmd->pid == pid)
+				cu_cmd->status = (status);
+		}
+	}
+}
+
+void	close_fds_parent(const t_environment *env, int pipe_fd[2][2], size_t curr)
+{
+	if (curr && close(pipe_fd[(!(curr % 2))][0]) == -1)
+		ft_print_error(env, NULL, "close fd error\n");
+	if (close(pipe_fd[curr % 2][1]) == -1)
+		ft_print_error(env, NULL, "close fd error\n");
 }
 
 pid_t	go_throw_groups(t_environment *env, pid_t pid, int pipe_fd[2][2])
 {
-	size_t	current;
-	int		status;
-	pid_t *pids;
+	size_t		current;
+	t_cmd	*cur_cmd;
 
-	pids = malloc(ft_size(&env->groups) * sizeof(pid_t));
 	current = -1;
 	while (++current < ft_size(&env->groups))
 	{
+		cur_cmd = (t_cmd *) ft_get_element(&env->groups, current);
 		pipe(pipe_fd[current % 2]);
 		pid = fork();
 		if (pid == -1)
@@ -83,40 +112,31 @@ pid_t	go_throw_groups(t_environment *env, pid_t pid, int pipe_fd[2][2])
 			proc_prep(env, current, pipe_fd, 1);
 		else
 		{
-			if (current && close(pipe_fd[(!(current % 2))][0]) == -1)
-				ft_raise_error("close fd error\n");
-			if (close(pipe_fd[current % 2][1]) == -1)
-				ft_raise_error("close fd error\n");
-			pids[current] = pid;
+			cur_cmd->pid = pid;
+			close_fds_parent(env, pipe_fd, current);
 		}
 	}
-	if (waitpid(pids[(current - 1)], &status, 0) == -1)
-		ft_print_errno(env, "wait error");
-	if (pipe_fd[0][0])
-		close(pipe_fd[0][0]);
-	current = -1;
-	while (++current < ft_size(&env->groups))
-	{
-		wait(0);
-		kill(pids[current], SIGTERM);
-	}
-	return (status);
+	if (pipe_fd[(current % 2)][0])
+		close(pipe_fd[(current % 2)][0]);
+	wait_write_statuses(env);
+	return (cur_cmd->status);
 }
 
 int	executor(t_environment *env)
 {
-	int			pid;
+	int			status;
 	int			pipe_fd[2][2];
-	t_command	*cur_cmd;
+	t_cmd	*cur_cmd;
 
-	pid = 0;
-	cur_cmd = (t_command *) ft_get_element(&env->groups, 0);
+	status = 0;
+	cur_cmd = (t_cmd *) ft_get_element(&env->groups, 0);
 	if (ft_size(&env->groups) == 1 && cur_cmd->builtin)
 	{
 		pipe(pipe_fd[0]);
 		proc_prep(env, 0, pipe_fd, 0);
+		status = cur_cmd->status;
 	}
 	else
-		pid = go_throw_groups(env, pid, pipe_fd);
-	return (pid);
+		status = go_throw_groups(env, status, pipe_fd);
+	return (status);
 }
