@@ -27,9 +27,9 @@ LINK_LIB_D	=	-lreadline -l$(LIB_NAME_S_D) -L$(LIB_PATH) -l$(LIB_V_NAME_S_D) -L$(
 SRCS		=	$(addprefix srcs/,\
 				signal.c prompt.c commands_utilities.c utilities.c utilities_vector.c commands.c commands_2.c \
 				exit.c destroy.c utilities_variable_env.c utilities_variable_env_2.c fill.c init.c file_utilities.c print.c minishell.c \
-				lexer.c lexer_utilities.c redirections_utils.c ft_errors_managment.c here_doc.c \
-				parser.c parser_utilities.c parser_utilities_vars.c parser_utilities_syntax.c executor.c \
-				executor_utilities.c path_utilities.c  )
+				redirections_utils.c lexer.c lexer_utilities.c ft_errors_managment.c here_doc.c \
+				parser.c parser_expanding.c parser_expanding_utilities.c parser_vars.c parser_syntax.c \
+				executor.c executor_utilities.c path_utilities.c executor_postactions.c)
 
 HEADERS		=	includes/minishell.h
 

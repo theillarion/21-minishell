@@ -77,38 +77,3 @@ bool	ft_convert_vector_to_array(char	***dst,	const t_vector	*src)
 	(*dst)[i] = NULL;
 	return (true);
 }
-
-bool	ft_convert_token_vector_to_str_array(char	***dst,	const t_vector	*src)
-{
-	char	*str;
-	size_t	i;
-	t_token	*token;
-	int		j;
-
-	if (dst == NULL)
-		return (false);
-	*dst = (char **)malloc((ft_size(src) + 1) * sizeof(**dst));
-	if (*dst == NULL)
-		return (false);
-	i = -1;
-	j = 0;
-	while (++i < ft_size(src))
-	{
-		token = (t_token *)ft_get_element(src, i);
-		if (token->type == t_sep)
-			continue ;
-		str = NULL;
-		while (token->type != t_sep && i < ft_size(src))
-		{
-			str = ft_strjoin(str, ft_substr(token->start, 0, token->size));
-			i++;
-			token = (t_token *)ft_get_element(src, i);
-		}
-		if (str == NULL)
-			return (false);
-		(*dst)[j] = str;
-		j++;
-	}
-	(*dst)[j] = NULL;
-	return (true);
-}

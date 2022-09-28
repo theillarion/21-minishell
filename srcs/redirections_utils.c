@@ -1,6 +1,6 @@
-#include "../includes/minishell.h"
+#include "minishell.h"
 
-void	input_file_fd(t_redir *token)
+void	input_file_fd(t_redir *token, t_cmd *cmd)
 {
 	char	*path;
 	int		read_fd;
@@ -9,13 +9,10 @@ void	input_file_fd(t_redir *token)
 	read_fd = open(path, O_RDONLY);
 	if (read_fd == -1)
 		ft_raise_perror(path, 0);
-	if (dup2(read_fd, 0) == -1)
-		ft_raise_perror(path, 0);
-	if (close(read_fd) == -1)
-		ft_raise_perror(path, 0);
+	cmd->fd_in = read_fd;
 }
 
-void	output_file_fd(t_redir *token)
+void	output_file_fd(t_redir *token, t_cmd *cmd)
 {
 	char	*path;
 	int		flags;
@@ -30,18 +27,23 @@ void	output_file_fd(t_redir *token)
 	write_fd = open(path, flags, 0644);
 	if (write_fd == -1)
 		ft_raise_perror(path, 0);
-	if (dup2(write_fd, 1) == -1)
-		ft_raise_perror(path, 0);
-	if (close(write_fd) == -1)
-		ft_raise_perror(path, 0);
+	cmd->fd_out = write_fd;
 }
 
-void	here_doc_child(t_redir *token)
+void	serve_redirects(t_cmd *cmd)
 {
-	if (token->here_doc_fd == -1)
-		ft_raise_error("here_doc fd error\n");
-	if (dup2(token->here_doc_fd, 0) == -1)
-		ft_raise_error("dup2 here_doc fd error\n");
-	if (close(token->here_doc_fd) == -1)
-		ft_raise_error("close here_doc fd error\n");
+	t_redir		*redir;
+	size_t		r;
+
+	r = -1;
+	while (++r < ft_size(&cmd->redirs))
+	{
+		redir = (t_redir *)ft_get_element(&cmd->redirs, r);
+		if (redir->r_type == t_r_in)
+			input_file_fd(redir, cmd);
+		if (redir->r_type == t_hd)
+			here_doc(redir, cmd);
+		if (redir->r_type == t_r_out || redir->r_type == t_r_outa)
+			output_file_fd(redir, cmd);
+	}
 }

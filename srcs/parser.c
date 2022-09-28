@@ -55,6 +55,8 @@ int	get_command(t_environment *env, size_t *i)
 	int		command_added;
 
 	cmd.builtin = NULL;
+	cmd.fd_in = 0;
+	cmd.fd_out = 1;
 	ft_init_vector(&cmd.redirs, sizeof(t_redir), NULL);
 	ft_init_vector(&cmd.args, sizeof(t_token), NULL);
 	command_added = 0;

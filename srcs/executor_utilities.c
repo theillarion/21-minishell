@@ -1,57 +1,116 @@
 #include "minishell.h"
 
-void	free_command_args(char **args)
+void	close_fds(const t_environment *env)
 {
-	char	**args_bkp;
+	size_t	current;
+	t_cmd	*cur_cmd;
 
-	args_bkp = args;
-	while (*args_bkp)
+	current = -1;
+	while (++current < ft_size(&env->groups))
 	{
-		free(*args_bkp);
-		args_bkp++;
+		cur_cmd = ft_get_element(&env->groups, current);
+		if (cur_cmd->fd_in > 0)
+		{
+			if (close(cur_cmd->fd_in) == -1)
+				ft_raise_error("close\n");
+		}
+		if (cur_cmd->fd_out > 1)
+		{
+			if (close(cur_cmd->fd_out) == -1)
+				ft_raise_error("close\n");
+		}
+		cur_cmd->fd_in = 0;
+		cur_cmd->fd_out = 1;
 	}
-	free(args);
 }
 
-void	free_tokens(const t_environment *env)
+void	wait_write_statuses(const t_environment *env)
 {
-	size_t	i;
-	t_token	*token;
+	size_t		current;
+	int			status;
+	pid_t		pid;
+	size_t		current_i;
+	t_cmd		*cu_cmd;
 
-	i = -1;
-	while (++i < ft_size(&env->tokens))
+	current = -1;
+	while (++current < ft_size(&env->groups))
 	{
-		token = ft_get_element(&env->tokens, i);
-		free(token->start);
-		if (token->type == t_r_out || token->type == t_r_outa
-			|| token->type == t_r_in || token->type == t_hd)
+		pid = waitpid(-1, &status, WUNTRACED);
+		current_i = -1;
+		while (++current_i < ft_size(&env->groups))
 		{
-			++i;
-			token = ft_get_element(&env->tokens, i);
-			if (token->type == t_sep)
-				i++;
+			cu_cmd = ft_get_element(&env->groups, current_i);
+			if (cu_cmd && cu_cmd->pid == pid)
+				cu_cmd->status = (status);
 		}
 	}
 }
 
-void	ft_free_cmd_vectors(t_environment *env)
+void	serve_pipes(t_environment *env, size_t current, t_cmd *cur_cmd)
 {
-	size_t		i;
-	t_cmd	*current;
+	int		pipe_fd[2];
+	t_cmd	*next_cmd;
 
-	i = -1;
-	while (++i < ft_size(&env->groups))
+	next_cmd = NULL;
+	if ((current + 1) < ft_size(&env->groups))
 	{
-		current = ft_get_element(&env->groups, i);
-		ft_erase_all(&current->args);
-		ft_erase_all(&current->redirs);
+		next_cmd = (t_cmd *) ft_get_element(&env->groups, current + 1);
+		pipe(pipe_fd);
+		if (next_cmd->fd_in == 0)
+			next_cmd->fd_in = pipe_fd[0];
+		else
+			close(pipe_fd[0]);
+		if (cur_cmd->fd_out == 1)
+			cur_cmd->fd_out = pipe_fd[1];
+		else
+			close(pipe_fd[1]);
 	}
-	ft_erase_all(&env->groups);
-	free_tokens(env);
-	ft_erase_all(&env->tokens);
 }
 
-void	postactions(t_environment *env)
+char	*construct_arg(const t_vector *src, size_t *i, t_token *token)
 {
-	ft_free_cmd_vectors(env);
+	char	*str;
+	char	*t_str;
+
+	str = NULL;
+	while (token->type != t_sep && *i < ft_size(src))
+	{
+		t_str = ft_substr(token->start, 0, token->size);
+		if (! t_str)
+			return (str);
+		str = ft_strjoin(str, t_str);
+		free(t_str);
+		(*i)++;
+		token = (t_token *)ft_get_element(src, *i);
+	}
+	return (str);
+}
+
+bool	ft_token_vector_to_str_array(char	***dst, const t_vector	*src)
+{
+	size_t	i;
+	t_token	*token;
+	int		j;
+	char	*str;
+
+	if (dst == NULL)
+		return (false);
+	*dst = (char **)malloc((ft_size(src) + 1) * sizeof(**dst));
+	if (*dst == NULL)
+		return (false);
+	i = -1;
+	j = 0;
+	while (++i < ft_size(src))
+	{
+		token = (t_token *)ft_get_element(src, i);
+		if (token->type == t_sep)
+			continue ;
+		str = construct_arg(src, &i, token);
+		if (str == NULL)
+			return (false);
+		(*dst)[j] = str;
+		j++;
+	}
+	(*dst)[j] = NULL;
+	return (true);
 }

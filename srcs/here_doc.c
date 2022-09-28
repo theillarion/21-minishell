@@ -1,4 +1,4 @@
-#include "../includes/minishell.h"
+#include "minishell.h"
 
 static volatile sig_atomic_t	g_my_signal_flag = 0;
 
@@ -45,7 +45,7 @@ int	handle_line(char *delimit, char **str, int pipe_fd[2])
 	return (1);
 }
 
-void	here_doc(t_redir *token)
+void	here_doc(t_redir *token, t_cmd *cmd)
 {
 	char	*str;
 	char	*token_delimiter;
@@ -55,7 +55,7 @@ void	here_doc(t_redir *token)
 	signal(SIGINT, stop_readline);
 	if (pipe(pipe_fd) == -1)
 		ft_raise_error("pipe error\n");
-	token->here_doc_fd = pipe_fd[0];
+	cmd->fd_in = pipe_fd[0];
 	token_delimiter = ft_substr(token->arg->start, 0, token->arg->size);
 	if (! token_delimiter)
 		ft_raise_error("malloc delimiter error\n");
@@ -69,25 +69,4 @@ void	here_doc(t_redir *token)
 			return ;
 	}
 	finalize_heredoc(pipe_fd, str, token_delimiter);
-}
-
-void	read_heredocs(t_environment *env)
-{
-	size_t	current_cmd;
-	t_redir	*redir;
-	size_t	current_redir;
-	t_cmd	*cmd;
-
-	current_cmd = -1;
-	while (++current_cmd < ft_size(&env->groups))
-	{
-		cmd = ft_get_element(&env->groups, current_cmd);
-		current_redir = -1;
-		while (++current_redir < ft_size(&cmd->redirs))
-		{
-			redir = (t_redir *)ft_get_element(&cmd->redirs, current_redir);
-			if (redir->r_type == t_hd)
-				here_doc(redir);
-		}
-	}
 }

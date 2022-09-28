@@ -4,7 +4,7 @@ char	*ft_strjoin_with_free(char *str1, char *str2, int free_1, int free_2)
 {
 	char	*result;
 
-	if (!str1 && ! str2)
+	if (! str1 && ! str2)
 		return (NULL);
 	else if (!str1)
 		result = ft_strdup(str2);

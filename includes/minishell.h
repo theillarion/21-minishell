@@ -85,7 +85,6 @@ typedef struct s_redir
 {
 	int		r_type;
 	t_token	*arg;
-	int		here_doc_fd;
 }	t_redir;
 
 typedef struct s_environment
@@ -117,9 +116,11 @@ typedef struct s_command
 	t_function	*builtin;
 	int			status;
 	pid_t		pid;
+	int			fd_in;
+	int			fd_out;
 }				t_cmd;
 
-bool			ft_push(t_vector        *vector, const char     *string_var);
+bool			ft_push(t_vector *vector, const char *string_var);
 size_t			ft_find_by_name(const t_vector	*vector, const char	*name);
 t_variable_env	*ft_get_by_name(const t_vector	*vector, const char *name);
 
@@ -171,9 +172,9 @@ void			ft_exit_with_message(t_environment	*env, int status,
 					const char	*command, const char	*msg);
 
 //				redirections_utils.c
-void			input_file_fd(t_redir *token);
-void			output_file_fd(t_redir *tokens);
-void			here_doc_child(t_redir *token);
+void			input_file_fd(t_redir *token, t_cmd *cmd);
+void			output_file_fd(t_redir *tokens, t_cmd *cmd);
+void			serve_redirects(t_cmd *cmd);
 
 //				ft_isspace.c
 int				ft_isspace(int c);
@@ -185,33 +186,50 @@ int				ft_raise_perror(char *strarg, int free_arg);
 void			exit_find_failure(char **in_argv, char *access_denied_path);
 
 //				here_doc.c
-void			here_doc(t_redir *token);
-void			read_heredocs(t_environment *env);
+void			here_doc(t_redir *token, t_cmd *cmd);
+
+//				lexer_utilities.x
+void			parse_token_sym(char **input, t_token *ttoken);
+void			parse_token_word(char **input, t_token *ttoken);
 
 //				lexer.c
 void			lexer(t_environment *env);
 
-//				parser_utilities_vars.c
+//				parser_vars.c
 char			*ft_strjoin_with_free(char *str1, char *str2, int free_1,
 					int free_2);
 char			*get_v(const char *string, int *i, const t_environment *env,
 					int beg);
-//				parser_utilities_syntax.c
+//				parser_syntax.c
 int				ft_syntax_error(t_environment *env);
 int				check_syntax_token(t_environment *env, size_t i);
 
-//				parser_utilities.c
+//				parser_expanding_utilities.c
+int				parse_symbols(t_environment *env, char **cs, int *i, int *err);
+void			go_throw_string(char **cs, int *i, t_environment *env, int *r);
+void			get_result_string(char **res, char *fp, char *lp, char *val);
+
+//				parser_expanding.c
 int				expand_word(t_environment *env, char **start, int *size);
+char			*str_qoutes(char *current_str, int *i, int *r);
+char			*str_slash(char *current_string, int *i);
+char			*str_expanding(char *current_s, int *i, t_environment *env);
+char			*str_doub_qoutes(char *cs, int *i, t_environment *env, int *r);
 
 //				parser.c
 int				parser(t_environment *env);
 
 //				paths_utilities.c
-void			free_command_args(char **args);
+void			find_cmd_in_path(char **args, char **envp);
 
 //				executor_utilities.c
+void			close_fds(const t_environment *env);
+void			wait_write_statuses(const t_environment *env);
+void			serve_pipes(t_environment *env, size_t current, t_cmd *cur_cmd);
+
+//				executor_postactions.c
 void			postactions(t_environment *env);
-void			find_cmd_in_path(char **args, char **envp);
+void			free_command_args(char **args);
 
 //				executor.c
 int				executor(t_environment *env);
@@ -219,7 +237,7 @@ int				executor(t_environment *env);
 //				utilities_variable_env.c
 char			*ft_get_str(const t_variable_env	*var_env);
 bool			ft_convert_vector_to_array(char	***dst,	const t_vector	*src);
-bool			ft_convert_token_vector_to_str_array(char	***dst,	const t_vector	*src);
+bool			ft_token_vector_to_str_array(char ***dst, const t_vector *src);
 
 //				utilities_variable_env_2.c
 bool			ft_convert_str_to_struct(const t_vector	*variable_env,
