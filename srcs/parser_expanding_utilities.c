@@ -40,17 +40,28 @@ void	go_throw_string(char **cs, int *i, t_environment *env, int *r)
 	}
 }
 
-void	get_result_string(char **res, char *fp, char *lp, char *val)
+void	get_result_str(char **r, char *fp, char *lp, char *val)
 {
 	if (!val && !ft_strlen(fp) && !ft_strlen(lp))
 	{
 		free(fp);
 		free(lp);
-		*res = ft_strdup("");
+		*r = ft_strdup("");
 	}
 	else
 	{
-		*res = ft_strjoin_with_free(fp, val, 1, 1);
-		*res = ft_strjoin_with_free(*res, lp, 1, 1);
+		*r = ft_strjoin_with_free(fp, val, 1, 1);
+		*r = ft_strjoin_with_free(*r, lp, 1, 1);
 	}
+}
+
+int	chk_end_exp_w(const char *cs, int *i, int beginning)
+{
+	if (*i == beginning + 1 && cs[*i] == '?' && (*i)++)
+		return (1);
+	if (*i == beginning + 1 && !ft_isalpha(cs[*i]) && (*i)++)
+		return (1);
+	if (!ft_isalnum(cs[*i]) && cs[*i] != '_')
+		return (1);
+	return (0);
 }

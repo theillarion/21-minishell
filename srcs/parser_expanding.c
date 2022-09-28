@@ -40,6 +40,7 @@ char	*str_qoutes(char *current_str, int *i, int *r)
 	return (result);
 }
 
+
 char	*str_expanding(char *cs, int *i, t_environment *env)
 {
 	int				beginning;
@@ -51,11 +52,7 @@ char	*str_expanding(char *cs, int *i, t_environment *env)
 	beginning = *i;
 	while (cs[++(*i)])
 	{
-		if (*i == beginning + 1 && cs[*i] == '?' && (*i)++)
-			break ;
-		if (*i == beginning + 1 && !ft_isalpha(cs[*i]) && (*i)++)
-			break ;
-		if (!ft_isalnum(cs[*i]) && cs[*i] != '_')
+		if (chk_end_exp_w(cs, i, beginning))
 			break ;
 	}
 	firstpart = ft_substr(cs, 0, beginning);
@@ -64,9 +61,11 @@ char	*str_expanding(char *cs, int *i, t_environment *env)
 		var_value = ft_itoa(env->last_code);
 	else
 		var_value = get_v(cs, i, env, beginning);
-	if (firstpart && var_value)
+	if (var_value)
 		*i = ft_strlen(firstpart) + ft_strlen(var_value) - 1;
-	get_result_string(&result, firstpart, lastpart, var_value);
+	else
+		*i = ft_strlen(firstpart) - 1;
+	get_result_str(&result, firstpart, lastpart, var_value);
 	free(cs);
 	return (result);
 }

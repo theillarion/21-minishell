@@ -207,7 +207,8 @@ int				check_syntax_token(t_environment *env, size_t i);
 //				parser_expanding_utilities.c
 int				parse_symbols(t_environment *env, char **cs, int *i, int *err);
 void			go_throw_string(char **cs, int *i, t_environment *env, int *r);
-void			get_result_string(char **res, char *fp, char *lp, char *val);
+void			get_result_str(char **r, char *fp, char *lp, char *val);
+int				chk_end_exp_w(const char *cs, int *i, int beginning);
 
 //				parser_expanding.c
 int				expand_word(t_environment *env, char **start, int *size);
