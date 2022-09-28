@@ -213,7 +213,7 @@ void			get_result_string(char **res, char *fp, char *lp, char *val);
 int				expand_word(t_environment *env, char **start, int *size);
 char			*str_qoutes(char *current_str, int *i, int *r);
 char			*str_slash(char *current_string, int *i);
-char			*str_expanding(char *current_s, int *i, t_environment *env);
+char			*str_expanding(char *cs, int *i, t_environment *env);
 char			*str_doub_qoutes(char *cs, int *i, t_environment *env, int *r);
 
 //				parser.c

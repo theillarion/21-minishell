@@ -30,13 +30,13 @@ void	go_throw_string(char **cs, int *i, t_environment *env, int *r)
 		if ((*cs)[*i] == '\\' && ((*cs)[*i + 1] == '\\'
 				|| (*cs)[*i + 1] == '$' || (*cs)[*i + 1] == '\"'))
 			(*cs) = str_slash((*cs), i);
-		else if ((*cs)[*i] == '$')
-			(*cs) = str_expanding((*cs), i, env);
-		else if ((*cs)[*i] == '\"')
+		if ((*cs)[*i] == '\"')
 		{
 			*r = 0;
 			break ;
 		}
+		if ((*cs)[*i] == '$')
+			(*cs) = str_expanding((*cs), i, env);
 	}
 }
 

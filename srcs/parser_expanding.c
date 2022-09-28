@@ -23,7 +23,7 @@ char	*str_qoutes(char *current_str, int *i, int *r)
 
 	begin = *i;
 	*r = 1;
-	while (current_str[++*i])
+	while (current_str[++(*i)])
 	{
 		if (current_str[*i] == '\'')
 		{
@@ -40,7 +40,7 @@ char	*str_qoutes(char *current_str, int *i, int *r)
 	return (result);
 }
 
-char	*str_expanding(char *current_s, int *i, t_environment *env)
+char	*str_expanding(char *cs, int *i, t_environment *env)
 {
 	int				beginning;
 	char			*result;
@@ -49,23 +49,25 @@ char	*str_expanding(char *current_s, int *i, t_environment *env)
 	char			*var_value;
 
 	beginning = *i;
-	while (current_s[++(*i)])
+	while (cs[++(*i)])
 	{
-		if (*i == beginning + 1 && current_s[*i] == '?' && (*i)++)
+		if (*i == beginning + 1 && cs[*i] == '?' && (*i)++)
 			break ;
-		if (*i == beginning + 1 && !ft_isalpha(current_s[*i]) && (*i)++)
+		if (*i == beginning + 1 && !ft_isalpha(cs[*i]) && (*i)++)
 			break ;
-		if (!ft_isalnum(current_s[*i]) && current_s[*i] != '_')
+		if (!ft_isalnum(cs[*i]) && cs[*i] != '_')
 			break ;
 	}
-	firstpart = ft_substr(current_s, 0, beginning);
-	lastpart = ft_strdup(current_s + *i);
-	if (current_s[(*i) - 1] == '?')
+	firstpart = ft_substr(cs, 0, beginning);
+	lastpart = ft_strdup(cs + *i);
+	if (cs[(*i) - 1] == '?')
 		var_value = ft_itoa(env->last_code);
 	else
-		var_value = get_v(current_s, i, env, beginning);
+		var_value = get_v(cs, i, env, beginning);
+	if (firstpart && var_value)
+		*i = ft_strlen(firstpart) + ft_strlen(var_value) - 1;
 	get_result_string(&result, firstpart, lastpart, var_value);
-	free(current_s);
+	free(cs);
 	return (result);
 }
 
