@@ -16,8 +16,6 @@ static void	execute(t_environment	*env)
 {
 	int		status;
 
-	signal(SIGINT, ft_handle_signal_child);
-	signal(SIGQUIT, ft_handle_signal_child);
 	status = executor(env);
 	postactions(env);
 	if (WIFEXITED(status) != 0)

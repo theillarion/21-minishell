@@ -28,6 +28,8 @@ void	proc_prep(t_environment *env, size_t ind, int is_chd)
 {
 	t_cmd	*cur_cmd;
 
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	cur_cmd = (t_cmd *) ft_get_element(&env->groups, ind);
 	if (cur_cmd->fd_in > 0)
 	{
@@ -56,6 +58,8 @@ pid_t	go_commands(t_environment *env, pid_t pid)
 		serve_pipes(env, current, cur_cmd);
 		if (! cur_cmd->status)
 		{
+			signal(SIGINT, SIG_IGN);
+			signal(SIGQUIT, SIG_IGN);
 			pid = fork();
 			if (pid == -1)
 				ft_print_error(env, NULL, "fork error");
