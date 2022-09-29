@@ -1,7 +1,7 @@
 NAME		=	minishell
 NAME_D		=	$(NAME)_debug
 
-CC			=	clang
+CC			=	cc
 FLAGS		=	-Wall -Werror -Wextra
 FLAGS_D		=	-g
 
