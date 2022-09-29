@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_vars.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
+/*   By: glashli <glashli@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 15:58:54 by ltowelie          #+#    #+#             */
-/*   Updated: 2022/09/29 16:31:51 by illarion         ###   ########.fr       */
+/*   Updated: 2022/09/29 21:24:42 by glashli          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ char	*ft_strjoin_with_free(char *str1, char *str2, int free_1, int free_2)
 		result = ft_strdup(str1);
 	else
 		result = ft_strjoin(str1, str2);
-	if (str1 && free_1)
-		free(str1);
-	if (str2 && free_2)
-		free(str2);
+	if (free_1)
+		ft_smart_free((void **)&str1);
+	if (free_2)
+		ft_smart_free((void **)&str2);
 	return (result);
 }
 
@@ -50,12 +50,12 @@ char	*get_v(const char *string, int *i, const t_environment *env, int beg)
 		{
 			var_value = ft_strjoin_with_free(var_value, *ptr, 1, 0);
 			if (*(ptr + 1))
-				ft_strjoin_with_free(var_value, ":", 1, 0);
+				var_value = ft_strjoin_with_free(var_value, ":", 1, 0);
 			ptr++;
 		}
 	}
 	if (var_value && ft_strlen(var_name) > ft_strlen(var_value))
 		*i = *i - (int)(ft_strlen(var_name) - ft_strlen(var_value));
-	free(var_name);
+	ft_smart_free((void *)&var_name);
 	return (var_value);
 }

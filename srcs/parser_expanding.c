@@ -12,20 +12,21 @@
 
 #include "minishell.h"
 
-char	*str_slash(char *current_string, int *i)
+char	*str_slash(char *cs, int *i)
 {
 	char	*result;
 	char	*firstpart;
 	char	*lastpart;
 
-	firstpart = ft_substr(current_string, 0, *i);
-	lastpart = ft_strdup(current_string + *i);
+	firstpart = ft_substr(cs, 0, *i);
+	lastpart = ft_strdup(cs + *i);
 	result = ft_strjoin_with_free(firstpart, lastpart, 1, 1);
-	free(current_string);
+	(*i) = (*i) + 2;
+	free(cs);
 	return (result);
 }
 
-char	*str_qoutes(char *current_str, int *i, int *r)
+char	*str_qoutes(char *cs, int *i, int *r)
 {
 	int		begin;
 	char	*firstpart;
@@ -35,20 +36,21 @@ char	*str_qoutes(char *current_str, int *i, int *r)
 
 	begin = *i;
 	*r = 1;
-	while (current_str[++(*i)])
+	while (cs[++(*i)])
 	{
-		if (current_str[*i] == '\'')
+		if (cs[*i] == '\'')
 		{
 			*r = 0;
 			break ;
 		}
 	}
-	firstpart = ft_substr(current_str, 0, begin);
-	in_qoutes_part = ft_substr(current_str, begin + 1, (*i - begin - 1));
-	lastpart = ft_strdup(current_str + *i + 1);
+	firstpart = ft_substr(cs, 0, begin);
+	in_qoutes_part = ft_substr(cs, begin + 1, (*i - begin - 1));
+	lastpart = ft_strdup(cs + *i + 1);
+	*i = ft_strlen(firstpart) + ft_strlen(in_qoutes_part) - 1;
 	result = ft_strjoin_with_free(firstpart, in_qoutes_part, 1, 1);
 	result = ft_strjoin_with_free(result, lastpart, 1, 1);
-	free(current_str);
+	free(cs);
 	return (result);
 }
 
@@ -95,6 +97,7 @@ char	*str_doub_qoutes(char *cs, int *i, t_environment *env, int *r)
 	firstpart = ft_substr(cs, 0, begin);
 	in_qoutes_part = ft_substr(cs, begin + 1, (*i - begin - 1));
 	lastpart = ft_strdup(cs + *i + 1);
+	*i = ft_strlen(firstpart) + ft_strlen(in_qoutes_part) - 1;
 	result = ft_strjoin_with_free(firstpart, in_qoutes_part, 1, 1);
 	result = ft_strjoin_with_free(result, lastpart, 1, 1);
 	free(cs);
