@@ -25,9 +25,15 @@ char	*ft_strjoin_with_free(char *str1, char *str2, int free_1, int free_2)
 	else
 		result = ft_strjoin(str1, str2);
 	if (str1 && free_1)
+	{
 		free(str1);
+		str1 = NULL;
+	}
 	if (str2 && free_2)
+	{
 		free(str2);
+		str2 = NULL;
+	}
 	return (result);
 }
 
@@ -50,12 +56,12 @@ char	*get_v(const char *string, int *i, const t_environment *env, int beg)
 		{
 			var_value = ft_strjoin_with_free(var_value, *ptr, 1, 0);
 			if (*(ptr + 1))
-				ft_strjoin_with_free(var_value, ":", 1, 0);
+				var_value = ft_strjoin_with_free(var_value, ":", 1, 0);
 			ptr++;
 		}
 	}
 	if (var_value && ft_strlen(var_name) > ft_strlen(var_value))
 		*i = *i - (int)(ft_strlen(var_name) - ft_strlen(var_value));
-	free(var_name);
+	ft_smart_free((void *)&var_name);
 	return (var_value);
 }
