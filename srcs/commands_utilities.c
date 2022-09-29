@@ -20,7 +20,7 @@ char	*ft_get_pwd(void)
 	ft_memset(path, '\0', PATH_MAX + 1);
 	if (getcwd(path, PATH_MAX) == NULL)
 	{
-		free(path);
+		ft_smart_free((void **)&path);
 		return (NULL);
 	}
 	return (path);

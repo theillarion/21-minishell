@@ -99,7 +99,7 @@ void	ft_main_handle(t_environment	*env)
 		env->is_need_update_envp = false;
 		ft_smart_double_free((void ***)&env->envp);
 		if (!ft_convert_vector_to_array(&env->envp, &env->variables_env))
-			env->envp = NULL;
+			ft_smart_double_free((void ***)&env->envp);
 	}
 }
 
