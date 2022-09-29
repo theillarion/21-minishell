@@ -21,6 +21,7 @@ char	*str_slash(char *cs, int *i)
 	firstpart = ft_substr(cs, 0, *i);
 	lastpart = ft_strdup(cs + *i);
 	result = ft_strjoin_with_free(firstpart, lastpart, 1, 1);
+	(*i) = (*i) + 2;
 	free(cs);
 	return (result);
 }
@@ -46,6 +47,7 @@ char	*str_qoutes(char *cs, int *i, int *r)
 	firstpart = ft_substr(cs, 0, begin);
 	in_qoutes_part = ft_substr(cs, begin + 1, (*i - begin - 1));
 	lastpart = ft_strdup(cs + *i + 1);
+	*i = ft_strlen(firstpart) + ft_strlen(in_qoutes_part) - 1;
 	result = ft_strjoin_with_free(firstpart, in_qoutes_part, 1, 1);
 	result = ft_strjoin_with_free(result, lastpart, 1, 1);
 	free(cs);
