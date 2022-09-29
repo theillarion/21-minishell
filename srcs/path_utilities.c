@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   path_utilities.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/29 15:10:47 by illarion          #+#    #+#             */
+/*   Updated: 2022/09/29 15:12:39 by illarion         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	free_paths(char	**paths)
@@ -65,8 +77,6 @@ void	find_cmd_in_path(char **args, char **envp)
 	{
 		ft_full_path(args, paths, &path, &full_path);
 		execve(full_path, args, envp);
-//		if (errno == EACCES)
-//			access_denied_path = ft_strdup(full_path);
 		free(full_path);
 		free(path);
 		paths++;

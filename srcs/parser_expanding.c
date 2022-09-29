@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_expanding.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/29 15:10:31 by illarion          #+#    #+#             */
+/*   Updated: 2022/09/29 15:11:48 by illarion         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 char	*str_slash(char *current_string, int *i)
@@ -39,7 +51,6 @@ char	*str_qoutes(char *current_str, int *i, int *r)
 	free(current_str);
 	return (result);
 }
-
 
 char	*str_expanding(char *cs, int *i, t_environment *env)
 {

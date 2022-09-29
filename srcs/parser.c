@@ -1,6 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/29 15:10:43 by illarion          #+#    #+#             */
+/*   Updated: 2022/09/29 15:12:11 by illarion         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int	add_redirect(t_environment *env, t_vector *redirs, t_vector *tokens, size_t *i)
+int	add_redirect(t_environment *env, t_vector *redirs, t_vector *tokens,
+					size_t *i)
 {
 	t_redir	redir;
 	t_token	*next_token;
