@@ -224,6 +224,9 @@ int				parser(t_environment *env);
 void			find_cmd_in_path(char **args, char **envp);
 
 //				executor_utilities.c
+void			ft_exec_command(t_environment *env, t_cmd *cmd, int is_child);
+
+//				executor_utilities.c
 void			close_fds(const t_environment *env);
 void			wait_write_statuses(const t_environment *env);
 void			serve_pipes(t_environment *env, size_t current, t_cmd *cur_cmd);

@@ -5,27 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/29 15:10:47 by illarion          #+#    #+#             */
-/*   Updated: 2022/09/29 15:12:39 by illarion         ###   ########.fr       */
+/*   Created: 2022/09/29 15:59:01 by ltowelie          #+#    #+#             */
+/*   Updated: 2022/09/29 16:35:39 by illarion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	free_paths(char	**paths)
-{
-	char	*path;
-	char	**paths_bkp;
-
-	paths_bkp = paths;
-	while (*paths_bkp)
-	{
-		path = *paths_bkp;
-		free(path);
-		paths_bkp++;
-	}
-	free(paths);
-}
 
 char	**find_path(char **envp)
 {
@@ -81,6 +66,6 @@ void	find_cmd_in_path(char **args, char **envp)
 		free(path);
 		paths++;
 	}
-	free_paths(paths_bkp);
+	ft_smart_double_free((void ***)&paths_bkp);
 	exit_find_failure(args, access_denied_path);
 }
