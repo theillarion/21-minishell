@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ltowelie <ltowelie@student.21-school.ru    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/29 15:58:57 by ltowelie          #+#    #+#             */
+/*   Updated: 2022/09/29 15:59:34 by ltowelie         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int	add_redirect(t_environment *env, t_vector *redirs, t_vector *tokens, size_t *i)
+int	add_redir(t_environment *env, t_vector *redirs, t_vector *tokens, size_t *i)
 {
 	t_redir	redir;
 	t_token	*next_token;
@@ -70,7 +82,7 @@ int	get_command(t_environment *env, size_t *i)
 			return (1);
 		if (cur_token->type == t_pipe)
 			break ;
-		add_redirect(env, &cmd.redirs, &env->tokens, i);
+		add_redir(env, &cmd.redirs, &env->tokens, i);
 		add_cmd_and_args(env, &cmd, cur_token, &command_added);
 		(*i)++;
 	}
