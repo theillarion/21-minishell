@@ -1,10 +1,12 @@
 #include "minishell.h"
 
-int	add_redirect(t_vector *redirs, t_token *token, t_vector *tokens, size_t *i)
+int	add_redirect(t_environment *env, t_vector *redirs, t_vector *tokens, size_t *i)
 {
 	t_redir	redir;
 	t_token	*next_token;
+	t_token	*token;
 
+	token = ft_get_element(&env->tokens, *i);
 	if (token->type != t_r_in && token->type != t_r_out
 		&& token->type != t_r_outa && token->type != t_hd)
 		return (0);
@@ -12,7 +14,7 @@ int	add_redirect(t_vector *redirs, t_token *token, t_vector *tokens, size_t *i)
 	next_token = (t_token *)ft_get_element(tokens, *i);
 	if (next_token->type == t_sep)
 		next_token = (t_token *)ft_get_element(tokens, ++(*i));
-	if (!next_token)
+	if (! next_token || expand_word(env, &next_token->start, &next_token->size))
 		return (0);
 	redir.arg = next_token;
 	redir.r_type = token->type;
@@ -57,6 +59,7 @@ int	get_command(t_environment *env, size_t *i)
 	cmd.builtin = NULL;
 	cmd.fd_in = 0;
 	cmd.fd_out = 1;
+	cmd.status = 0;
 	ft_init_vector(&cmd.redirs, sizeof(t_redir), NULL);
 	ft_init_vector(&cmd.args, sizeof(t_token), NULL);
 	command_added = 0;
@@ -67,7 +70,7 @@ int	get_command(t_environment *env, size_t *i)
 			return (1);
 		if (cur_token->type == t_pipe)
 			break ;
-		add_redirect(&cmd.redirs, cur_token, &env->tokens, i);
+		add_redirect(env, &cmd.redirs, &env->tokens, i);
 		add_cmd_and_args(env, &cmd, cur_token, &command_added);
 		(*i)++;
 	}
@@ -83,7 +86,7 @@ int	parser(t_environment *env)
 	i = -1;
 	while (++i < ft_size(&env->tokens))
 	{
-		if (check_syntax_token(env, i))
+		if (check_syntax_token(env, &i))
 			return (1);
 	}
 	i = -1;

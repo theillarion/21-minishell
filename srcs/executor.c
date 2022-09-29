@@ -52,15 +52,18 @@ pid_t	go_commands(t_environment *env, pid_t pid)
 	while (++current < ft_size(&env->groups))
 	{
 		cur_cmd = (t_cmd *) ft_get_element(&env->groups, current);
-		serve_redirects(cur_cmd);
+		serve_redirects(env, cur_cmd);
 		serve_pipes(env, current, cur_cmd);
-		pid = fork();
-		if (pid == -1)
-			ft_print_error(env, NULL, "fork error");
-		else if (pid == 0)
-			proc_prep(env, current, 1);
-		else
-			cur_cmd->pid = pid;
+		if (! cur_cmd->status)
+		{
+			pid = fork();
+			if (pid == -1)
+				ft_print_error(env, NULL, "fork error");
+			else if (pid == 0)
+				proc_prep(env, current, 1);
+			else
+				cur_cmd->pid = pid;
+		}
 	}
 	close_fds(env);
 	wait_write_statuses(env);
@@ -77,7 +80,7 @@ int	single_builtin(t_environment *env, t_cmd *cur_cmd)
 	old_stdout = dup(1);
 	if (old_stdin == -1 || old_stdout == -1)
 		return (ft_print_error(env, NULL, "dup error\n"));
-	serve_redirects(cur_cmd);
+	serve_redirects(env, cur_cmd);
 	proc_prep(env, 0, 0);
 	if (dup2(old_stdin, 0) == -1)
 		return (ft_print_error(env, NULL, "dup2 error\n"));

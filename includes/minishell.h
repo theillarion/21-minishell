@@ -172,9 +172,9 @@ void			ft_exit_with_message(t_environment	*env, int status,
 					const char	*command, const char	*msg);
 
 //				redirections_utils.c
-void			input_file_fd(t_redir *token, t_cmd *cmd);
-void			output_file_fd(t_redir *tokens, t_cmd *cmd);
-void			serve_redirects(t_cmd *cmd);
+void			input_file_fd(t_environment *env, t_redir *token, t_cmd *cmd);
+void			output_file_fd(t_environment *env, t_redir *tokens, t_cmd *cmd);
+void			serve_redirects(t_environment *env, t_cmd *cmd);
 
 //				ft_isspace.c
 int				ft_isspace(int c);
@@ -202,7 +202,7 @@ char			*get_v(const char *string, int *i, const t_environment *env,
 					int beg);
 //				parser_syntax.c
 int				ft_syntax_error(t_environment *env);
-int				check_syntax_token(t_environment *env, size_t i);
+int				check_syntax_token(t_environment *env, size_t *i);
 
 //				parser_expanding_utilities.c
 int				parse_symbols(t_environment *env, char **cs, int *i, int *err);

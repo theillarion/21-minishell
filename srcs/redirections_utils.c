@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	input_file_fd(t_redir *token, t_cmd *cmd)
+void	input_file_fd(t_environment *env, t_redir *token, t_cmd *cmd)
 {
 	char	*path;
 	int		read_fd;
@@ -8,11 +8,15 @@ void	input_file_fd(t_redir *token, t_cmd *cmd)
 	path = ft_substr(token->arg->start, 0, token->arg->size);
 	read_fd = open(path, O_RDONLY);
 	if (read_fd == -1)
-		ft_raise_perror(path, 0);
+	{
+		ft_print_errno(env, path);
+		cmd->status = ENOENT;
+	}
+	free(path);
 	cmd->fd_in = read_fd;
 }
 
-void	output_file_fd(t_redir *token, t_cmd *cmd)
+void	output_file_fd(t_environment *env, t_redir *token, t_cmd *cmd)
 {
 	char	*path;
 	int		flags;
@@ -26,11 +30,15 @@ void	output_file_fd(t_redir *token, t_cmd *cmd)
 		flags = flags | O_TRUNC;
 	write_fd = open(path, flags, 0644);
 	if (write_fd == -1)
-		ft_raise_perror(path, 0);
+	{
+		ft_print_errno(env, path);
+		cmd->status = ENOENT;
+	}
+	free(path);
 	cmd->fd_out = write_fd;
 }
 
-void	serve_redirects(t_cmd *cmd)
+void	serve_redirects(t_environment *env, t_cmd *cmd)
 {
 	t_redir		*redir;
 	size_t		r;
@@ -40,10 +48,10 @@ void	serve_redirects(t_cmd *cmd)
 	{
 		redir = (t_redir *)ft_get_element(&cmd->redirs, r);
 		if (redir->r_type == t_r_in)
-			input_file_fd(redir, cmd);
+			input_file_fd(env, redir, cmd);
 		if (redir->r_type == t_hd)
 			here_doc(redir, cmd);
 		if (redir->r_type == t_r_out || redir->r_type == t_r_outa)
-			output_file_fd(redir, cmd);
+			output_file_fd(env, redir, cmd);
 	}
 }

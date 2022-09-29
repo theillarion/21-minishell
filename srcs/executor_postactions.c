@@ -5,8 +5,8 @@ void	free_tokens(const t_environment *env)
 	size_t	i;
 	t_token	*token;
 
-	i = -1;
-	while (++i < ft_size(&env->tokens))
+	i = 0;
+	while (i < ft_size(&env->tokens))
 	{
 		token = ft_get_element(&env->tokens, i);
 		free(token->start);
@@ -18,6 +18,8 @@ void	free_tokens(const t_environment *env)
 			if (token->type == t_sep)
 				i++;
 		}
+		else
+			i++;
 	}
 }
 

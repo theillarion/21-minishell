@@ -73,7 +73,7 @@ char	*construct_arg(const t_vector *src, size_t *i, t_token *token)
 	char	*t_str;
 
 	str = NULL;
-	while (token->type != t_sep && *i < ft_size(src))
+	while (*i < ft_size(src) && token->type != t_sep)
 	{
 		t_str = ft_substr(token->start, 0, token->size);
 		if (! t_str)
