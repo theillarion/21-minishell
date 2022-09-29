@@ -1,30 +1,6 @@
 #include "minishell.h"
 
-void	ft_exec_command(t_environment *env, t_cmd *cmd, int is_child)
-{
-	char	*command;
-	char	**envp;
-	char	**args;
-
-	ft_token_vector_to_str_array(&args, &cmd->args);
-	if (cmd->builtin)
-	{
-		if (is_child)
-			exit(cmd->builtin->func(env, (const char *const *)(args + 1)));
-		cmd->status = cmd->builtin->func(env, (const char *const *)(args + 1));
-		free_command_args(args);
-	}
-	else
-	{
-		command = ft_substr(cmd->command->start, 0, cmd->command->size);
-		ft_convert_vector_to_array(&envp, &env->variables_env);
-		if (ft_strchr(command, '/') != NULL)
-			execve(command, args, envp);
-		find_cmd_in_path(args, envp);
-	}
-}
-
-void	proc_prep(t_environment *env, size_t ind, int is_chd)
+void	prepare_cmd(t_environment *env, size_t ind, int is_chd)
 {
 	t_cmd	*cur_cmd;
 
@@ -43,6 +19,28 @@ void	proc_prep(t_environment *env, size_t ind, int is_chd)
 	ft_exec_command(env, cur_cmd, is_chd);
 }
 
+void	prepare_fork(t_environment *env, pid_t pid, size_t cur, t_cmd *cur_cmd)
+{
+	serve_redirects(env, cur_cmd);
+	serve_pipes(env, cur, cur_cmd);
+	if (! cur_cmd->status)
+	{
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
+		pid = fork();
+		if (pid == -1)
+			ft_print_error(env, NULL, "fork error");
+		else if (pid == 0)
+		{
+			signal(SIGINT, SIG_DFL);
+			signal(SIGQUIT, SIG_DFL);
+			prepare_cmd(env, cur, 1);
+		}
+		else
+			cur_cmd->pid = pid;
+	}
+}
+
 pid_t	go_commands(t_environment *env, pid_t pid)
 {
 	size_t	current;
@@ -52,18 +50,7 @@ pid_t	go_commands(t_environment *env, pid_t pid)
 	while (++current < ft_size(&env->groups))
 	{
 		cur_cmd = (t_cmd *) ft_get_element(&env->groups, current);
-		serve_redirects(env, cur_cmd);
-		serve_pipes(env, current, cur_cmd);
-		if (! cur_cmd->status)
-		{
-			pid = fork();
-			if (pid == -1)
-				ft_print_error(env, NULL, "fork error");
-			else if (pid == 0)
-				proc_prep(env, current, 1);
-			else
-				cur_cmd->pid = pid;
-		}
+		prepare_fork(env, pid, current, cur_cmd);
 	}
 	close_fds(env);
 	wait_write_statuses(env);
@@ -81,7 +68,7 @@ int	single_builtin(t_environment *env, t_cmd *cur_cmd)
 	if (old_stdin == -1 || old_stdout == -1)
 		return (ft_print_error(env, NULL, "dup error\n"));
 	serve_redirects(env, cur_cmd);
-	proc_prep(env, 0, 0);
+	prepare_cmd(env, 0, 0);
 	if (dup2(old_stdin, 0) == -1)
 		return (ft_print_error(env, NULL, "dup2 error\n"));
 	if (close(old_stdin) == -1)

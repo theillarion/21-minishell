@@ -29,7 +29,7 @@ SRCS		=	$(addprefix srcs/,\
 				exit.c destroy.c utilities_variable_env.c utilities_variable_env_2.c fill.c init.c file_utilities.c print.c minishell.c \
 				redirections_utils.c lexer.c lexer_utilities.c ft_errors_managment.c here_doc.c \
 				parser.c parser_expanding.c parser_expanding_utilities.c parser_vars.c parser_syntax.c \
-				executor.c executor_utilities.c path_utilities.c executor_postactions.c)
+				executor.c executor_utilities.c path_utilities.c executor_postactions.c executor_exec.c)
 
 HEADERS		=	includes/minishell.h
 

@@ -36,6 +36,13 @@ void	wait_write_statuses(const t_environment *env)
 	while (++current < ft_size(&env->groups))
 	{
 		pid = waitpid(-1, &status, WUNTRACED);
+		if (WIFSIGNALED(status) != 0)
+		{
+			if (WTERMSIG(status) == SIGINT)
+				printf("\n");
+			else if (WTERMSIG(status) == SIGQUIT)
+				printf("Quit: 3\n");
+		}
 		current_i = -1;
 		while (++current_i < ft_size(&env->groups))
 		{
