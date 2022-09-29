@@ -6,11 +6,11 @@
 /*   By: illarion <glashli@student.21-school.ru>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/29 15:09:52 by illarion          #+#    #+#             */
-/*   Updated: 2022/09/29 15:13:46 by illarion         ###   ########.fr       */
+/*   Updated: 2022/09/29 15:14:45 by illarion         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "minishell.h"
 
 void	cmd_not_found(char *const *in_argv)
 {
