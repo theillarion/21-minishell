@@ -56,7 +56,7 @@ char	*get_v(const char *string, int *i, const t_environment *env, int beg)
 		{
 			var_value = ft_strjoin_with_free(var_value, *ptr, 1, 0);
 			if (*(ptr + 1))
-				ft_strjoin_with_free(var_value, ":", 1, 0);
+				var_value = ft_strjoin_with_free(var_value, ":", 1, 0);
 			ptr++;
 		}
 	}
