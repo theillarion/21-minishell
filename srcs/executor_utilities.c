@@ -89,6 +89,7 @@ void	serve_pipes(t_environment *env, size_t current, t_cmd *cur_cmd)
 char	*construct_arg(const t_vector *src, size_t *i, t_token *token)
 {
 	char	*str;
+	char	*str_bkp;
 	char	*t_str;
 
 	str = NULL;
@@ -97,8 +98,10 @@ char	*construct_arg(const t_vector *src, size_t *i, t_token *token)
 		t_str = ft_substr(token->start, 0, token->size);
 		if (! t_str)
 			return (str);
+		str_bkp = str;
 		str = ft_strjoin(str, t_str);
-		free(t_str);
+		ft_smart_free((void **)&str_bkp);
+		ft_smart_free((void **)&t_str);
 		(*i)++;
 		token = (t_token *)ft_get_element(src, *i);
 	}

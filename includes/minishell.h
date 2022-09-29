@@ -223,7 +223,7 @@ int				parser(t_environment *env);
 //				paths_utilities.c
 void			find_cmd_in_path(char **args, char **envp);
 
-//				executor_utilities.c
+//				executor_exec.c
 void			ft_exec_command(t_environment *env, t_cmd *cmd, int is_child);
 
 //				executor_utilities.c
